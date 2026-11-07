@@ -17,12 +17,24 @@
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
 
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=7" />
+  <link rel="stylesheet" href="css/styles.css?v=8" />
 </head>
 <body class="mode-conventional">
 
   <!-- FONDO GEOESPACIAL 3D (Mapbox GL JS) -->
   <div id="map"></div>
+
+  <!-- CONTENEDOR DE VIDEO FALLBACK SINCRONIZADO (MODO OFFLINE DE ALTA FIDELIDAD) -->
+  <div id="video-backdrop" class="video-backdrop" aria-hidden="true">
+    <video
+      id="fallback-player"
+      class="fallback-player"
+      autoplay
+      loop
+      muted
+      playsinline
+      preload="auto"></video>
+  </div>
 
   <!-- CAPA DE ESCURECIMIENTO / BLUR PARA SLIDES CONVENCIONALES -->
   <div id="map-backdrop" class="map-backdrop active"></div>
@@ -44,6 +56,13 @@
       <div class="telemetry-item">
         <span class="telemetry-label">ZOOM / PITCH</span>
         <span class="telemetry-value" id="tel-camera">12.8x · 45°</span>
+      </div>
+      <div class="hud-connection-group">
+        <span id="connection-badge" class="connection-badge status-online">ONLINE · MAPBOX 3D</span>
+        <button id="toggle-offline-mode" class="btn-hud-mode" title="Alternar manualmente entre Modo Online (Mapbox 3D) y Modo Offline (Video Fallback)">
+          <span class="mode-dot"></span>
+          <span id="offline-toggle-label">Modo Offline (Video)</span>
+        </button>
       </div>
       <button id="toggle-map-interact" class="btn-hud-interact" title="Activar/Desactivar navegación libre en el mapa 3D">
         <span class="interact-indicator"></span>
@@ -776,6 +795,6 @@
   <!-- Mapbox GL JS v3.x Script -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
   <!-- Custom Logic -->
-  <script src="js/app.js?v=6"></script>
+  <script src="js/app.js?v=8"></script>
 </body>
 </html>

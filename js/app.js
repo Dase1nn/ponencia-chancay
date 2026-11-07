@@ -2,67 +2,94 @@
  * ============================================================================
  * PONENCIA CIENCIA POLÍTICA: CASO CHANCAY (2024–2026)
  * Arquitectura Híbrida Scrollytelling: Reveal.js v5 + Mapbox GL JS v3 (3D)
+ * + Sistema de Fallback Multimedia Sincronizado (Modo Offline de Alta Fidelidad)
  * ============================================================================
  */
 
 // 1. TOKEN OFICIAL MAPBOX GL JS
-mapboxgl.accessToken = 'pk.eyJ1IjoiZGFzZTFubiIsImEiOiJjbXc2cnV1eW4wY2kwMnlxdmVjbDlra2pzIn0.0b7H2sikoaR0BUtJv-eDeQ';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFzZTFubiIsImEiOiJjbXc2cnV1eW4wY2kwMnlxdmVjbDlra2pzIn0.0b7H2sikoaR0BUtJv-eDeQ';
+if (typeof mapboxgl !== 'undefined') {
+  mapboxgl.accessToken = MAPBOX_TOKEN;
+}
 
-// 2. DEFINICIÓN DE LAS 6 ZONAS ANCLA (MARCADORES INTERACTIVOS HTML/CSS)
+// 2. MAPA DE VIDEOCLIPS PARA MODO OFFLINE (SLIDES 4 A 9)
+const OFFLINE_VIDEO_MAP = {
+  3: 'assets/videos/slide4_distrital.webm',   // Slide 4 (0-based index: 3)
+  4: 'assets/videos/slide5_puerto.webm',      // Slide 5 (0-based index: 4)
+  5: 'assets/videos/slide6_peralvillo.webm',  // Slide 6 (0-based index: 5)
+  6: 'assets/videos/slide7_evitamiento.webm', // Slide 7 (0-based index: 6)
+  7: 'assets/videos/slide8_muni.webm',        // Slide 8 (0-based index: 7)
+  8: 'assets/videos/slide9_culebra.webm'      // Slide 9 (0-based index: 8)
+};
+
+// Cache en memoria/Blob por si se graban en caliente con MediaRecorder
+const recordedVideoBlobs = {};
+
+// 3. DEFINICIÓN DE LAS 6 ZONAS ANCLA (MARCADORES INTERACTIVOS HTML/CSS)
 const ANCHOR_POINTS = [
   {
     id: 1,
-    slideIndex: 3, // Slide 4 (0-based index: 3)
+    slideIndex: 3, // Slide 4
+    fileName: 'slide4_distrital.webm',
     title: '01 · Distrito de Chancay (Escala Distrital)',
     subtitle: 'Brechas: 30% sin agua · 27% sin desagüe · 65% vías sin pavimentar',
     coords: [-77.2680, -11.5700],
-    colorClass: 'marker-cyan'
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
   },
   {
     id: 2,
     slideIndex: 4, // Slide 5
+    fileName: 'slide5_puerto.webm',
     title: '02 · Terminal Portuario Multipropósito (CSPCP)',
     subtitle: 'Punta Chancay · Inversión > US$ 1,300M (Bloqueo de facto corporativo)',
     coords: [-77.2785, -11.5835],
-    colorClass: 'marker-amber'
+    colorClass: 'marker-amber',
+    hexColor: '#d97706'
   },
   {
     id: 3,
     slideIndex: 5, // Slide 6
+    fileName: 'slide6_peralvillo.webm',
     title: '03 · Sector Peralvillo y Bahía El Cascajo',
     subtitle: 'Subsidencia túnel (mayo 2023) · Ausencia de PTAR (OEFA)',
     coords: [-77.2710, -11.5880],
-    colorClass: 'marker-rose'
+    colorClass: 'marker-rose',
+    hexColor: '#e11d48'
   },
   {
     id: 4,
     slideIndex: 6, // Slide 7
+    fileName: 'slide7_evitamiento.webm',
     title: '04 · Controversia Vía de Evitamiento (MTC vs. PDU)',
     subtitle: '3,657 rechazos ciudadanos al trazo costero del MTC',
-    coords: [-77.2755, -11.5475], // Centrado en el quiebre costero de La Calichera
-    colorClass: 'marker-amber'
+    coords: [-77.2755, -11.5475],
+    colorClass: 'marker-amber',
+    hexColor: '#d97706'
   },
   {
     id: 5,
     slideIndex: 7, // Slide 8
+    fileName: 'slide8_muni.webm',
     title: '05 · Municipalidad Distrital de Chancay (MDCH)',
     subtitle: 'Plaza de Armas · 21 plazas CAP · PIM S/ 40.9M (7.1% ejec. T1)',
     coords: [-77.2669, -11.5633],
-    colorClass: 'marker-cyan'
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
   },
   {
     id: 6,
     slideIndex: 8, // Slide 9
+    fileName: 'slide9_culebra.webm',
     title: '06 · A.H. Cerro La Culebra (Periferia Este)',
     subtitle: 'Conflicto por obras de saneamiento paralizadas desde 2022',
     coords: [-77.2550, -11.5580],
-    colorClass: 'marker-rose'
+    colorClass: 'marker-rose',
+    hexColor: '#e11d48'
   }
 ];
 
-// 3. CAPAS GEOJSON DE ALTA PRECISIÓN CARTOGRÁFICA (SEGÚN MAPA 3.5-7 DEL PDU CHANCAY P. 186)
-
-// 3.1. Propuesta MTC (Trazo Costero Rechazado: Corta por La Calichera y Playa Acapulco hacia Chancayllo)
+// 4. CAPAS GEOJSON DE ALTA PRECISIÓN CARTOGRÁFICA (SEGÚN MAPA 3.5-7 DEL PDU CHANCAY P. 186)
 const GEOJSON_MTC_COASTAL = {
   type: 'FeatureCollection',
   features: [
@@ -75,32 +102,31 @@ const GEOJSON_MTC_COASTAL = {
       geometry: {
         type: 'LineString',
         coordinates: [
-          [-77.2320, -11.6150], // Ingreso Sur (Panamericana Norte desde Ancón/Pasamayo)
-          [-77.2435, -11.6015], // Cruce Río Chancay / Las Salinas Sur
-          [-77.2525, -11.5940], // Las Salinas Norte
-          [-77.2585, -11.5855], // Este de Peralvillo / Acceso al Puerto
-          [-77.2605, -11.5775], // Eje Panamericana Sur de Chancay
-          [-77.2618, -11.5695], // Borde Este del casco urbano de Chancay
-          [-77.2642, -11.5630], // Salida Norte de Chancay (inicio del desvío al litoral)
-          [-77.2695, -11.5565], // Diagonal hacia la costa (Las Salinas / Chorrillos Norte)
-          [-77.2748, -11.5495], // Entrada al frente costero La Calichera
-          [-77.2768, -11.5465], // La Calichera (Borde Litoral)
-          [-77.2798, -11.5405], // Franja costera al Oeste de Los Laureles Sur y Norte
-          [-77.2835, -11.5335], // Borde costero al Oeste de Ex Hacienda Chancayllo
-          [-77.2858, -11.5290], // Playa Acapulco (separa expansión urbana del mar)
-          [-77.2882, -11.5220], // Borde litoral al Oeste de Limoncillo y Los Álamos
-          [-77.2892, -11.5150], // Extremo Noroeste Playa Acapulco
-          [-77.2885, -11.5095], // Curva de retorno hacia la Panamericana al Norte de Chancayllo
-          [-77.2852, -11.5042], // Empalme con Vía Panamericana Norte (San José / 4 de Junio)
-          [-77.2965, -11.4910], // Continuación Panamericana Norte
-          [-77.3180, -11.4725]  // Sector El Hatillo
+          [-77.2320, -11.6150],
+          [-77.2435, -11.6015],
+          [-77.2525, -11.5940],
+          [-77.2585, -11.5855],
+          [-77.2605, -11.5775],
+          [-77.2618, -11.5695],
+          [-77.2642, -11.5630],
+          [-77.2695, -11.5565],
+          [-77.2748, -11.5495],
+          [-77.2768, -11.5465],
+          [-77.2798, -11.5405],
+          [-77.2835, -11.5335],
+          [-77.2858, -11.5290],
+          [-77.2882, -11.5220],
+          [-77.2892, -11.5150],
+          [-77.2885, -11.5095],
+          [-77.2852, -11.5042],
+          [-77.2965, -11.4910],
+          [-77.3180, -11.4725]
         ]
       }
     }
   ]
 };
 
-// 3.2. Propuesta PDU Chancay (Trazo Alternativo Este: Quepepampa – Cerro La Culebra – Pampa Libre – San Cayetano)
 const GEOJSON_PDU_EAST = {
   type: 'FeatureCollection',
   features: [
@@ -113,32 +139,31 @@ const GEOJSON_PDU_EAST = {
       geometry: {
         type: 'LineString',
         coordinates: [
-          [-77.2320, -11.6150], // Ingreso Sur (Panamericana Norte)
-          [-77.2435, -11.6015], // Cruce Río Chancay / Las Salinas
-          [-77.2525, -11.5940], // Las Salinas Norte
-          [-77.2572, -11.5855], // Borde Oriental de Peralvillo / Chancay Park
-          [-77.2592, -11.5750], // Contorno Este de Chancay
-          [-77.2582, -11.5655], // Buena Vista Baja / Los Tilos
-          [-77.2555, -11.5595], // 28 de Julio / Buena Vista
-          [-77.2505, -11.5535], // Torre Blanca (Apertura hacia el Este)
-          [-77.2445, -11.5475], // Quepepampa
-          [-77.2392, -11.5415], // Ascenso hacia Cerro La Culebra
-          [-77.2362, -11.5355], // Vértice Este: Cerro La Culebra Sur
-          [-77.2358, -11.5310], // Vértice Este: Cerro La Culebra Norte
-          [-77.2395, -11.5245], // Arco Noreste (Exterior de Pampas Los Huacos)
-          [-77.2455, -11.5175], // Contorno Este de Pampa Libre
-          [-77.2528, -11.5105], // Diagonal Noroeste hacia San Cayetano
-          [-77.2605, -11.5038], // Aproximación a San Cayetano
-          [-77.2675, -11.5002], // San Cayetano (Norte de Chancayllo)
-          [-77.2755, -11.5012], // Tramo transversal Norte de Chancayllo
-          [-77.2852, -11.5042]  // Reingreso a Vía Panamericana Norte (San José / 4 de Junio)
+          [-77.2320, -11.6150],
+          [-77.2435, -11.6015],
+          [-77.2525, -11.5940],
+          [-77.2572, -11.5855],
+          [-77.2592, -11.5750],
+          [-77.2582, -11.5655],
+          [-77.2555, -11.5595],
+          [-77.2505, -11.5535],
+          [-77.2445, -11.5475],
+          [-77.2392, -11.5415],
+          [-77.2362, -11.5355],
+          [-77.2358, -11.5310],
+          [-77.2395, -11.5245],
+          [-77.2455, -11.5175],
+          [-77.2528, -11.5105],
+          [-77.2605, -11.5038],
+          [-77.2675, -11.5002],
+          [-77.2755, -11.5012],
+          [-77.2852, -11.5042]
         ]
       }
     }
   ]
 };
 
-// 3.3. Hitos Toponímicos del Mapa 3.5-7 del PDU Chancay para lectura cartográfica directa
 const GEOJSON_PDU_LANDMARKS = {
   type: 'FeatureCollection',
   features: [
@@ -180,7 +205,6 @@ const GEOJSON_PDU_LANDMARKS = {
   ]
 };
 
-// 3.4. Corredor Subterráneo del Túnel Viaducto (Punta Chancay – Peralvillo – Zona Operativa Sur)
 const GEOJSON_PORT_CORRIDOR = {
   type: 'FeatureCollection',
   features: [
@@ -192,355 +216,300 @@ const GEOJSON_PORT_CORRIDOR = {
       geometry: {
         type: 'LineString',
         coordinates: [
-          [-77.2785, -11.5835], // Complejo Operativo Punta Chancay
-          [-77.2710, -11.5880], // Sector Peralvillo (Zona de subsidencia mayo 2023)
-          [-77.2605, -11.5925]  // Zona Logística Portuaria / Empalme Sur
+          [-77.2785, -11.5835],
+          [-77.2710, -11.5880],
+          [-77.2605, -11.5925]
         ]
       }
     }
   ]
 };
 
-// 4. INICIALIZACIÓN DEL MAPA 3D CON ESTILO ESTRICTAMENTE SATELLITE-STREETS-V12
+// 5. ESTADO DE CONEXIÓN (ONLINE / OFFLINE) Y VARIABLES DE INSTANCIA
+let isOfflineMode = !navigator.onLine;
+let map = null;
 let mapReady = false;
 let isFreeMapMode = false;
+let currentVideoSrc = '';
+let videoFadeTimer = null;
 const markerElements = {};
 
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/satellite-streets-v12',
-  center: [-77.2680, -11.5700],
-  zoom: 12.8,
-  pitch: 45,
-  bearing: -15,
-  antialias: true,
-  projection: 'globe'
-});
+// 6. INICIALIZACIÓN CONDICIONAL DE MAPBOX GL JS (OMITIDA SI INICIA EN MODO OFFLINE)
+function initMapboxInstance() {
+  if (map || isOfflineMode || typeof mapboxgl === 'undefined') return;
 
-// Controles de navegación (zoom + brújula 3D) en la esquina inferior izquierda
-map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'bottom-left');
+  map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/satellite-streets-v12',
+    center: [-77.2680, -11.5700],
+    zoom: 12.8,
+    pitch: 45,
+    bearing: -15,
+    antialias: true,
+    preserveDrawingBuffer: true, // Permite capturar videoclips .webm con MediaRecorder (canvas.captureStream)
+    projection: 'globe'
+  });
 
-map.on('style.load', () => {
-  const styleLayers = map.getStyle().layers || [];
+  map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'bottom-left');
 
-  // 1. Garantizar que ninguna capa de tipo 'fill' oculte la fotografía satelital
-  let firstVectorLayerId = undefined;
-  let firstSymbolLayerId = undefined;
+  map.on('style.load', () => {
+    const styleLayers = map.getStyle().layers || [];
+    let firstVectorLayerId = undefined;
+    let firstSymbolLayerId = undefined;
 
-  for (const layer of styleLayers) {
-    if (layer.type === 'fill') {
-      map.setPaintProperty(layer.id, 'fill-opacity', 0);
+    for (const layer of styleLayers) {
+      if (layer.type === 'fill') {
+        map.setPaintProperty(layer.id, 'fill-opacity', 0);
+      }
+      if (!firstVectorLayerId && layer.id !== 'background' && layer.id !== 'satellite') {
+        firstVectorLayerId = layer.id;
+      }
+      if (!firstSymbolLayerId && layer.type === 'symbol') {
+        firstSymbolLayerId = layer.id;
+      }
     }
-    if (!firstVectorLayerId && layer.id !== 'background' && layer.id !== 'satellite') {
-      firstVectorLayerId = layer.id;
+
+    if (map.getLayer('satellite')) {
+      map.setLayoutProperty('satellite', 'visibility', 'visible');
+      map.setPaintProperty('satellite', 'raster-opacity', 1);
     }
-    if (!firstSymbolLayerId && layer.type === 'symbol') {
-      firstSymbolLayerId = layer.id;
-    }
-  }
 
-  if (map.getLayer('satellite')) {
-    map.setLayoutProperty('satellite', 'visibility', 'visible');
-    map.setPaintProperty('satellite', 'raster-opacity', 1);
-  }
-
-  // 2. Ortofoto satelital continua de alta resolución hasta zoom 19
-  if (!map.getSource('chancay-ortho-satellite')) {
-    map.addSource('chancay-ortho-satellite', {
-      type: 'raster',
-      tiles: [
-        'https://mt0.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}',
-        'https://mt1.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}',
-        'https://mt2.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}',
-        'https://mt3.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}'
-      ],
-      tileSize: 256,
-      maxzoom: 19
-    });
-
-    map.addLayer(
-      {
-        id: 'chancay-ortho-satellite-layer',
+    // Ortofoto satelital continua hasta zoom 19
+    if (!map.getSource('chancay-ortho-satellite')) {
+      map.addSource('chancay-ortho-satellite', {
         type: 'raster',
-        source: 'chancay-ortho-satellite',
-        paint: {
-          'raster-opacity': 1,
-          'raster-resampling': 'linear'
-        }
-      },
-      firstVectorLayerId
-    );
-  }
+        tiles: [
+          'https://mt0.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}',
+          'https://mt1.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}',
+          'https://mt2.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}',
+          'https://mt3.google.com/vt/lyrs=s&hl=es&x={x}&y={y}&z={z}'
+        ],
+        tileSize: 256,
+        maxzoom: 19
+      });
 
-  // 3. TERRENO 3D (mapbox-dem con exaggeration: 2.5)
-  if (!map.getSource('mapbox-dem')) {
-    map.addSource('mapbox-dem', {
-      type: 'raster-dem',
-      tiles: [
-        'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
-      ],
-      encoding: 'terrarium',
-      tileSize: 256,
-      maxzoom: 14
-    });
-  }
-
-  map.setTerrain({
-    source: 'mapbox-dem',
-    exaggeration: 1.85
-  });
-
-  // 4. EXTRUSIÓN DE EDIFICIOS 3D (nacen directamente de la fotografía satelital)
-  if (map.getSource('composite') && !map.getLayer('3d-buildings-chancay')) {
-    map.addLayer(
-      {
-        id: '3d-buildings-chancay',
-        source: 'composite',
-        'source-layer': 'building',
-        filter: ['==', 'extrude', 'true'],
-        type: 'fill-extrusion',
-        minzoom: 14,
-        paint: {
-          'fill-extrusion-color': '#cbd5e1',
-          'fill-extrusion-height': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            14,
-            0,
-            14.5,
-            ['coalesce', ['get', 'height'], 8]
-          ],
-          'fill-extrusion-base': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            14,
-            0,
-            14.5,
-            ['coalesce', ['get', 'min_height'], 0]
-          ],
-          'fill-extrusion-opacity': 0.75
-        }
-      },
-      firstSymbolLayerId
-    );
-  }
-
-  // 5. NIEBLA ATMOSFÉRICA DIURNA
-  map.setFog({
-    'range': [2.0, 10],
-    'color': '#e0f2fe',
-    'high-color': '#bae6fd',
-    'space-color': '#f8fafc',
-    'horizon-blend': 0.06
-  });
-
-  // 6. FUENTES Y CAPAS GEOJSON (Vía de Evitamiento MTC vs. PDU, Hitos y Corredor Túnel)
-  map.addSource('vias-mtc-source', {
-    type: 'geojson',
-    data: GEOJSON_MTC_COASTAL
-  });
-
-  map.addSource('vias-pdu-source', {
-    type: 'geojson',
-    data: GEOJSON_PDU_EAST
-  });
-
-  map.addSource('pdu-landmarks-source', {
-    type: 'geojson',
-    data: GEOJSON_PDU_LANDMARKS
-  });
-
-  map.addSource('port-corridor-source', {
-    type: 'geojson',
-    data: GEOJSON_PORT_CORRIDOR
-  });
-
-  // Halo exterior para el trazo del MTC (Rojo)
-  map.addLayer({
-    id: 'vias-mtc-glow',
-    type: 'line',
-    source: 'vias-mtc-source',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round'
-    },
-    paint: {
-      'line-color': '#ef4444',
-      'line-width': 12,
-      'line-opacity': 0.32,
-      'line-blur': 4
+      map.addLayer(
+        {
+          id: 'chancay-ortho-satellite-layer',
+          type: 'raster',
+          source: 'chancay-ortho-satellite',
+          paint: {
+            'raster-opacity': 1,
+            'raster-resampling': 'linear'
+          }
+        },
+        firstVectorLayerId
+      );
     }
-  });
 
-  // Línea roja punteada por La Calichera y Playa Acapulco (Propuesta inicial del MTC)
-  map.addLayer({
-    id: 'vias-mtc-line',
-    type: 'line',
-    source: 'vias-mtc-source',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round'
-    },
-    paint: {
-      'line-color': '#ef4444',
-      'line-width': 4.5,
-      'line-dasharray': [2, 1.4],
-      'line-opacity': 0.98
+    // Terreno 3D
+    if (!map.getSource('mapbox-dem')) {
+      map.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        tiles: [
+          'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
+        ],
+        encoding: 'terrarium',
+        tileSize: 256,
+        maxzoom: 14
+      });
     }
-  });
 
-  // Halo exterior para el trazo alternativo del PDU (Cian/Azul)
-  map.addLayer({
-    id: 'vias-pdu-glow',
-    type: 'line',
-    source: 'vias-pdu-source',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round'
-    },
-    paint: {
-      'line-color': '#0284c7',
-      'line-width': 12,
-      'line-opacity': 0.35,
-      'line-blur': 4
-    }
-  });
-
-  // Línea verde/cian continua hacia el Este por Quepepampa y Cerro La Culebra (Propuesta PDU)
-  map.addLayer({
-    id: 'vias-pdu-line',
-    type: 'line',
-    source: 'vias-pdu-source',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round'
-    },
-    paint: {
-      'line-color': '#22d3ee',
-      'line-width': 5,
-      'line-opacity': 0.98
-    }
-  });
-
-  // Puntos y etiquetas de referencia del Mapa 3.5-7 (La Calichera, Playa Acapulco, Quepepampa, Cerro La Culebra, San Cayetano)
-  map.addLayer({
-    id: 'pdu-landmarks-circles',
-    type: 'circle',
-    source: 'pdu-landmarks-source',
-    paint: {
-      'circle-radius': 5.5,
-      'circle-color': [
-        'match',
-        ['get', 'category'],
-        'mtc', '#ef4444',
-        'pdu', '#22d3ee',
-        '#f59e0b'
-      ],
-      'circle-stroke-width': 2,
-      'circle-stroke-color': '#ffffff'
-    }
-  });
-
-  map.addLayer({
-    id: 'pdu-landmarks-labels',
-    type: 'symbol',
-    source: 'pdu-landmarks-source',
-    layout: {
-      'text-field': ['get', 'label'],
-      'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-      'text-size': 11.5,
-      'text-offset': [0, 1.3],
-      'text-anchor': 'top'
-    },
-    paint: {
-      'text-color': '#0f172a',
-      'text-halo-color': 'rgba(255, 255, 255, 0.95)',
-      'text-halo-width': 2.2
-    }
-  });
-
-  // Corredor del túnel viaducto (Punta Chancay - Peralvillo)
-  map.addLayer({
-    id: 'port-corridor-line',
-    type: 'line',
-    source: 'port-corridor-source',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round'
-    },
-    paint: {
-      'line-color': '#f59e0b',
-      'line-width': 4,
-      'line-dasharray': [1.2, 1.2],
-      'line-opacity': 0.95
-    }
-  });
-
-  // 7. Crear Marcadores HTML/CSS con Pulso Animado para las 6 Zonas Ancla
-  ANCHOR_POINTS.forEach((anchor) => {
-    const el = document.createElement('div');
-    el.className = `custom-marker ${anchor.colorClass}`;
-    el.innerHTML = `
-      <div class="marker-pin-wrap">
-        <div class="marker-pulse"></div>
-        <div class="marker-core"></div>
-      </div>
-      <div class="marker-label">${anchor.title}</div>
-    `;
-
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      Reveal.slide(anchor.slideIndex);
+    map.setTerrain({
+      source: 'mapbox-dem',
+      exaggeration: 1.85
     });
 
-    new mapboxgl.Marker({ element: el, anchor: 'bottom' })
-      .setLngLat(anchor.coords)
-      .addTo(map);
+    // Edificios 3D
+    if (map.getSource('composite') && !map.getLayer('3d-buildings-chancay')) {
+      map.addLayer(
+        {
+          id: '3d-buildings-chancay',
+          source: 'composite',
+          'source-layer': 'building',
+          filter: ['==', 'extrude', 'true'],
+          type: 'fill-extrusion',
+          minzoom: 14,
+          paint: {
+            'fill-extrusion-color': '#cbd5e1',
+            'fill-extrusion-height': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              14,
+              0,
+              14.5,
+              ['coalesce', ['get', 'height'], 8]
+            ],
+            'fill-extrusion-base': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              14,
+              0,
+              14.5,
+              ['coalesce', ['get', 'min_height'], 0]
+            ],
+            'fill-extrusion-opacity': 0.75
+          }
+        },
+        firstSymbolLayerId
+      );
+    }
 
-    markerElements[anchor.id] = el;
+    // Niebla atmosférica diurna
+    map.setFog({
+      'range': [2.0, 10],
+      'color': '#e0f2fe',
+      'high-color': '#bae6fd',
+      'space-color': '#f8fafc',
+      'horizon-blend': 0.06
+    });
+
+    // Fuentes y capas GeoJSON
+    map.addSource('vias-mtc-source', { type: 'geojson', data: GEOJSON_MTC_COASTAL });
+    map.addSource('vias-pdu-source', { type: 'geojson', data: GEOJSON_PDU_EAST });
+    map.addSource('pdu-landmarks-source', { type: 'geojson', data: GEOJSON_PDU_LANDMARKS });
+    map.addSource('port-corridor-source', { type: 'geojson', data: GEOJSON_PORT_CORRIDOR });
+
+    map.addLayer({
+      id: 'vias-mtc-glow',
+      type: 'line',
+      source: 'vias-mtc-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#ef4444', 'line-width': 12, 'line-opacity': 0.32, 'line-blur': 4 }
+    });
+
+    map.addLayer({
+      id: 'vias-mtc-line',
+      type: 'line',
+      source: 'vias-mtc-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#ef4444', 'line-width': 4.5, 'line-dasharray': [2, 1.4], 'line-opacity': 0.98 }
+    });
+
+    map.addLayer({
+      id: 'vias-pdu-glow',
+      type: 'line',
+      source: 'vias-pdu-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#0284c7', 'line-width': 12, 'line-opacity': 0.35, 'line-blur': 4 }
+    });
+
+    map.addLayer({
+      id: 'vias-pdu-line',
+      type: 'line',
+      source: 'vias-pdu-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#22d3ee', 'line-width': 5, 'line-opacity': 0.98 }
+    });
+
+    map.addLayer({
+      id: 'pdu-landmarks-circles',
+      type: 'circle',
+      source: 'pdu-landmarks-source',
+      paint: {
+        'circle-radius': 5.5,
+        'circle-color': ['match', ['get', 'category'], 'mtc', '#ef4444', 'pdu', '#22d3ee', '#f59e0b'],
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+
+    map.addLayer({
+      id: 'pdu-landmarks-labels',
+      type: 'symbol',
+      source: 'pdu-landmarks-source',
+      layout: {
+        'text-field': ['get', 'label'],
+        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+        'text-size': 11.5,
+        'text-offset': [0, 1.3],
+        'text-anchor': 'top'
+      },
+      paint: {
+        'text-color': '#0f172a',
+        'text-halo-color': 'rgba(255, 255, 255, 0.95)',
+        'text-halo-width': 2.2
+      }
+    });
+
+    map.addLayer({
+      id: 'port-corridor-line',
+      type: 'line',
+      source: 'port-corridor-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#f59e0b', 'line-width': 4, 'line-dasharray': [1.2, 1.2], 'line-opacity': 0.95 }
+    });
+
+    // Marcadores HTML/CSS con pulso animado
+    ANCHOR_POINTS.forEach((anchor) => {
+      const el = document.createElement('div');
+      el.className = `custom-marker ${anchor.colorClass}`;
+      el.innerHTML = `
+        <div class="marker-pin-wrap">
+          <div class="marker-pulse"></div>
+          <div class="marker-core"></div>
+        </div>
+        <div class="marker-label">${anchor.title}</div>
+      `;
+
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        Reveal.slide(anchor.slideIndex);
+      });
+
+      new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat(anchor.coords)
+        .addTo(map);
+
+      markerElements[anchor.id] = el;
+    });
+
+    mapReady = true;
+
+    const currentSlide = Reveal.getCurrentSlide();
+    if (currentSlide) {
+      syncSlideWithMap(currentSlide, Reveal.getIndices().h);
+    }
+
+    // Si se solicitó autograbación por URL (?autorecord=true), iniciarla una vez cargado el mapa
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('autorecord') === 'true') {
+      setTimeout(() => {
+        window.recordAllAnchorVideos();
+      }, 2500);
+    }
   });
 
-  mapReady = true;
+  // Telemetría en tiempo real con requestAnimationFrame
+  let telemetryRaf = null;
+  map.on('move', () => {
+    if (telemetryRaf || isOfflineMode) return;
+    telemetryRaf = requestAnimationFrame(() => {
+      const center = map.getCenter();
+      const zoom = map.getZoom().toFixed(1);
+      const pitch = Math.round(map.getPitch());
 
-  // Sincronizar con la diapositiva activa actual
-  const currentSlide = Reveal.getCurrentSlide();
-  if (currentSlide) {
-    syncSlideWithMap(currentSlide, Reveal.getIndices().h);
-  }
-});
+      const coordsEl = document.getElementById('tel-coords');
+      const cameraEl = document.getElementById('tel-camera');
 
-// Actualizar telemetría en tiempo real durante el vuelo de helicóptero
-// Actualizar telemetría con requestAnimationFrame para evitar micro-pausas de DOM durante el vuelo 60fps
-let telemetryRaf = null;
-map.on('move', () => {
-  if (telemetryRaf) return;
-  telemetryRaf = requestAnimationFrame(() => {
-    const center = map.getCenter();
-    const zoom = map.getZoom().toFixed(1);
-    const pitch = Math.round(map.getPitch());
-
-    const coordsEl = document.getElementById('tel-coords');
-    const cameraEl = document.getElementById('tel-camera');
-
-    if (coordsEl) {
-      coordsEl.textContent = `${Math.abs(center.lng).toFixed(4)}°W, ${Math.abs(center.lat).toFixed(4)}°S`;
-    }
-    if (cameraEl) {
-      cameraEl.textContent = `${zoom}x · ${pitch}°`;
-    }
-    telemetryRaf = null;
+      if (coordsEl) {
+        coordsEl.textContent = `${Math.abs(center.lng).toFixed(4)}°W, ${Math.abs(center.lat).toFixed(4)}°S`;
+      }
+      if (cameraEl) {
+        cameraEl.textContent = `${zoom}x · ${pitch}°`;
+      }
+      telemetryRaf = null;
+    });
   });
-});
+}
 
-// Función de suavizado sinusoidal (easeInOutSine): aceleración y frenado orgánicos sin tirones en zoom in / zoom out
+// 7. FUNCIONES MATEMÁTICAS DE CÁMARA SUAVE Y ENCUADRE SPLIT
 function cinematicEasing(t) {
   return -(Math.cos(Math.PI * t) - 1) / 2;
 }
 
-// Calcula el centro geográfico desplazado hacia la derecha de la cámara (según zoom y bearing)
-// para que el marcador quede en la mitad izquierda libre de la pantalla sin usar `offset` brusco sobre el terreno 3D
 function getSplitScreenCenter(coords, zoomLevel, bearingLevel) {
   const [lng, lat] = coords;
   const shiftPixelsRight = window.innerWidth * 0.21;
@@ -555,7 +524,132 @@ function getSplitScreenCenter(coords, zoomLevel, bearingLevel) {
   return [lng + dLng, lat + dLat];
 }
 
-// 5. INICIALIZACIÓN DE REVEAL.JS v5
+// 8. SINCRONIZACIÓN Y REPRODUCCIÓN DEL VIDEO FALLBACK (MODO OFFLINE)
+function updateOfflineVideoForSlide(slideElement, slideIndex) {
+  const videoBackdrop = document.getElementById('video-backdrop');
+  const player = document.getElementById('fallback-player');
+  if (!videoBackdrop || !player) return;
+
+  const isMapSlide = slideElement && slideElement.getAttribute('data-map') === 'true';
+  const targetVideoPath = OFFLINE_VIDEO_MAP[slideIndex];
+
+  // Si estamos en una slide convencional (1 a 3 y 10 a 12), pausar y ocultar el reproductor
+  if (!isOfflineMode || !isMapSlide || !targetVideoPath) {
+    player.pause();
+    videoBackdrop.classList.remove('active');
+    return;
+  }
+
+  videoBackdrop.classList.add('active');
+
+  // Actualizar telemetría estática del HUD desde los atributos de la slide en modo offline
+  const centerAttr = slideElement.getAttribute('data-center');
+  const zoomAttr = slideElement.getAttribute('data-zoom') || '13.0';
+  const pitchAttr = slideElement.getAttribute('data-pitch') || '50';
+  if (centerAttr) {
+    const [lng, lat] = centerAttr.split(',').map(Number);
+    const coordsEl = document.getElementById('tel-coords');
+    const cameraEl = document.getElementById('tel-camera');
+    if (coordsEl) coordsEl.textContent = `${Math.abs(lng).toFixed(4)}°W, ${Math.abs(lat).toFixed(4)}°S`;
+    if (cameraEl) cameraEl.textContent = `${parseFloat(zoomAttr).toFixed(1)}x · ${Math.round(parseFloat(pitchAttr))}°`;
+  }
+
+  // Usar blob en memoria si existe o ruta en assets/videos/
+  const resolvedSrc = recordedVideoBlobs[slideIndex] || targetVideoPath;
+
+  if (currentVideoSrc === resolvedSrc) {
+    if (player.paused) {
+      player.play().catch(() => {});
+    }
+    return;
+  }
+
+  // Transición suave de desvanecimiento (fade transition de 0.4s) entre cambios de video
+  currentVideoSrc = resolvedSrc;
+  player.classList.add('is-fading');
+
+  if (videoFadeTimer) clearTimeout(videoFadeTimer);
+  videoFadeTimer = setTimeout(() => {
+    player.src = resolvedSrc;
+    player.load();
+    const playPromise = player.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          player.classList.remove('is-fading');
+        })
+        .catch(() => {
+          player.classList.remove('is-fading');
+        });
+    } else {
+      player.classList.remove('is-fading');
+    }
+  }, 220);
+}
+
+// 9. GESTIÓN DEL MODO ONLINE / OFFLINE (AUTOMÁTICO Y MANUAL)
+function updateConnectionHUD() {
+  const badge = document.getElementById('connection-badge');
+  const toggleBtn = document.getElementById('toggle-offline-mode');
+  const toggleLabel = document.getElementById('offline-toggle-label');
+  const interactBtn = document.getElementById('toggle-map-interact');
+
+  document.body.classList.toggle('is-offline-mode', isOfflineMode);
+
+  if (badge) {
+    badge.textContent = isOfflineMode ? 'OFFLINE · VIDEO FALLBACK' : 'ONLINE · MAPBOX 3D';
+    badge.classList.toggle('status-offline', isOfflineMode);
+    badge.classList.toggle('status-online', !isOfflineMode);
+  }
+
+  if (toggleBtn && toggleLabel) {
+    toggleBtn.classList.toggle('offline-active', isOfflineMode);
+    toggleLabel.textContent = isOfflineMode ? 'Volver a Mapbox 3D' : 'Modo Offline (Video)';
+  }
+
+  if (interactBtn) {
+    interactBtn.style.display = isOfflineMode ? 'none' : 'inline-flex';
+  }
+}
+
+function setOfflineMode(targetOfflineState) {
+  isOfflineMode = Boolean(targetOfflineState);
+  updateConnectionHUD();
+
+  const currentSlide = Reveal.getCurrentSlide();
+  const currentIndex = Reveal.getIndices().h;
+
+  if (isOfflineMode) {
+    if (isFreeMapMode) toggleFreeMapMode(false);
+    updateOfflineVideoForSlide(currentSlide, currentIndex);
+  } else {
+    // Pausar video y activar/inicializar Mapbox 3D si no había sido inicializado
+    const player = document.getElementById('fallback-player');
+    const videoBackdrop = document.getElementById('video-backdrop');
+    if (player) player.pause();
+    if (videoBackdrop) videoBackdrop.classList.remove('active');
+
+    if (!map) {
+      initMapboxInstance();
+    } else {
+      setTimeout(() => {
+        map.resize();
+        syncSlideWithMap(currentSlide, currentIndex);
+      }, 60);
+    }
+  }
+}
+
+// Escuchar eventos globales de red del navegador
+window.addEventListener('offline', () => {
+  setOfflineMode(true);
+});
+
+window.addEventListener('online', () => {
+  setOfflineMode(false);
+});
+
+// 10. INICIALIZACIÓN DE REVEAL.JS v5
 Reveal.initialize({
   controls: true,
   progress: true,
@@ -571,7 +665,7 @@ Reveal.initialize({
   maxScale: 1
 });
 
-// 6. FUNCIÓN DE SINCRONIZACIÓN DE CÁMARA ("EFECTO HELICÓPTERO" FLUIDO + ENCUADRE SPLIT BALANCEADO)
+// 11. FUNCIÓN CENTRAL DE SINCRONIZACIÓN DE DIAPOSITIVAS (MAPA 3D O VIDEO FALLBACK)
 function syncSlideWithMap(slideElement, slideIndex) {
   if (!slideElement) return;
 
@@ -606,6 +700,16 @@ function syncSlideWithMap(slideElement, slideIndex) {
     chip.classList.toggle('active', targetSlide === slideIndex);
   });
 
+  // Si estamos en Modo Offline, sincronizar el videoclip .webm correspondiente y omitir Mapbox
+  if (isOfflineMode) {
+    updateOfflineVideoForSlide(slideElement, slideIndex);
+    return;
+  }
+
+  // Asegurar que el contenedor de video esté pausado en Modo Online
+  const player = document.getElementById('fallback-player');
+  if (player && !player.paused) player.pause();
+
   // Resaltar marcador activo en el mapa 3D
   Object.keys(markerElements).forEach((id) => {
     const el = markerElements[id];
@@ -614,9 +718,9 @@ function syncSlideWithMap(slideElement, slideIndex) {
     }
   });
 
-  // Leer atributos de cámara de la diapositiva y ejecutar transición cinemática ultra-suave
+  // Ejecutar transición de cámara en Mapbox 3D
   const centerAttr = slideElement.getAttribute('data-center');
-  if (centerAttr && mapReady) {
+  if (centerAttr && map && mapReady) {
     const rawCoords = centerAttr.split(',').map(Number);
     const zoomLevel = parseFloat(slideElement.getAttribute('data-zoom') || '13.2');
     const pitchLevel = parseFloat(slideElement.getAttribute('data-pitch') || '50');
@@ -624,7 +728,6 @@ function syncSlideWithMap(slideElement, slideIndex) {
     const duration = parseFloat(slideElement.getAttribute('data-duration') || '3400');
     const curve = parseFloat(slideElement.getAttribute('data-curve') || '1.25');
 
-    // En las diapositivas de mapa (4 a 9), calculamos el centro geográfico compensado para ubicar el punto en la mitad izquierda
     const targetCenter = isMapSlide
       ? getSplitScreenCenter(rawCoords, zoomLevel, bearingLevel)
       : rawCoords;
@@ -652,7 +755,6 @@ function syncSlideWithMap(slideElement, slideIndex) {
       });
     }
 
-    // Ajustar intensidad de las capas GeoJSON cuando estamos en la Slide 7 (Ancla 4 - Vía de Evitamiento)
     const isViasSlide = slideElement.getAttribute('data-geojson') === 'vias';
     if (map.getLayer('vias-mtc-line') && map.getLayer('vias-pdu-line')) {
       map.setPaintProperty('vias-mtc-line', 'line-width', isViasSlide ? 6 : 3.5);
@@ -663,12 +765,20 @@ function syncSlideWithMap(slideElement, slideIndex) {
   }
 }
 
-// Escuchar cambios de diapositiva en Reveal.js
 Reveal.on('slidechanged', (event) => {
   syncSlideWithMap(event.currentSlide, event.indexh);
 });
 
-// 7. CONTROLES INTERACTIVOS DEL HUD Y NAVEGACIÓN DE ANCLAS
+Reveal.on('ready', (event) => {
+  updateConnectionHUD();
+  if (isOfflineMode) {
+    updateOfflineVideoForSlide(event.currentSlide, event.indexh);
+  } else {
+    initMapboxInstance();
+  }
+});
+
+// 12. CONTROLES INTERACTIVOS DEL HUD Y NAVEGACIÓN DE ANCLAS
 document.querySelectorAll('.anchor-chip').forEach((button) => {
   button.addEventListener('click', () => {
     const slideIdx = parseInt(button.getAttribute('data-slide'), 10);
@@ -677,6 +787,7 @@ document.querySelectorAll('.anchor-chip').forEach((button) => {
 });
 
 function toggleFreeMapMode(forceState) {
+  if (isOfflineMode) return;
   isFreeMapMode = typeof forceState === 'boolean' ? forceState : !isFreeMapMode;
   document.body.classList.toggle('free-map-mode', isFreeMapMode);
 
@@ -699,3 +810,146 @@ if (interactBtn) {
     toggleFreeMapMode();
   });
 }
+
+const offlineToggleBtn = document.getElementById('toggle-offline-mode');
+if (offlineToggleBtn) {
+  offlineToggleBtn.addEventListener('click', () => {
+    setOfflineMode(!isOfflineMode);
+  });
+}
+
+// ============================================================================
+// 13. GRABADOR AUTOMÁTICO DE VIDEOCLIPS (.WEBM, 60FPS) CON MEDIARECORDER API
+// Captura el canvas de Mapbox + el marcador activo en la mitad izquierda
+// ============================================================================
+window.recordSingleAnchorClip = function (anchor, durationMs = 5500) {
+  return new Promise((resolve, reject) => {
+    if (!map || !mapReady) {
+      reject(new Error('Mapbox no está inicializado.'));
+      return;
+    }
+
+    const sourceCanvas = map.getCanvas();
+    const compositeCanvas = document.createElement('canvas');
+    compositeCanvas.width = 1280;
+    compositeCanvas.height = 720;
+    const ctx = compositeCanvas.getContext('2d');
+
+    let isRecording = true;
+    const startTime = performance.now();
+
+    function renderCompositeFrame(now) {
+      if (!isRecording) return;
+      const elapsed = (now - startTime) / 1000;
+
+      // 1. Dibujar el frame 3D actual del canvas de Mapbox
+      ctx.drawImage(sourceCanvas, 0, 0, compositeCanvas.width, compositeCanvas.height);
+
+      // 2. Proyectar la coordenada del punto ancla sobre el canvas 1280x720
+      const projected = map.project(anchor.coords);
+      const scaleX = compositeCanvas.width / sourceCanvas.clientWidth;
+      const scaleY = compositeCanvas.height / sourceCanvas.clientHeight;
+      const px = projected.x * scaleX;
+      const py = projected.y * scaleY;
+
+      // 3. Dibujar el pulso animado y el marcador protagonista sobre el punto focal izquierdo
+      const pulsePhase = (elapsed % 1.75) / 1.75;
+      const pulseRadius = 16 + pulsePhase * 38;
+      const pulseAlpha = Math.max(0, (1 - pulsePhase) * 0.65);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, pulseRadius, 0, Math.PI * 2);
+      ctx.fillStyle = anchor.hexColor;
+      ctx.globalAlpha = pulseAlpha;
+      ctx.fill();
+      ctx.restore();
+
+      // Núcleo del marcador
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, 14, 0, Math.PI * 2);
+      ctx.fillStyle = anchor.hexColor;
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+      ctx.restore();
+
+      // Etiqueta Liquid Glass del marcador activo
+      ctx.save();
+      ctx.font = '800 15px "Plus Jakarta Sans", sans-serif';
+      const textWidth = ctx.measureText(anchor.title).width;
+      const boxW = textWidth + 32;
+      const boxH = 36;
+      const boxX = px - boxW / 2;
+      const boxY = py + 20;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.strokeStyle = anchor.hexColor;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(boxX, boxY, boxW, boxH, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(anchor.title, px, boxY + boxH / 2);
+      ctx.restore();
+
+      requestAnimationFrame(renderCompositeFrame);
+    }
+
+    requestAnimationFrame(renderCompositeFrame);
+
+    const stream = compositeCanvas.captureStream(60);
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ? 'video/webm;codecs=vp9'
+      : 'video/webm';
+
+    const recorder = new MediaRecorder(stream, {
+      mimeType: mimeType,
+      videoBitsPerSecond: 4500000
+    });
+
+    const chunks = [];
+    recorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) chunks.push(e.data);
+    };
+
+    recorder.onstop = async () => {
+      isRecording = false;
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      recordedVideoBlobs[anchor.slideIndex] = URL.createObjectURL(blob);
+
+      // Intentar guardar en el servidor local (/save-video) si está disponible
+      try {
+        await fetch(`/__save_video?name=${encodeURIComponent(anchor.fileName)}`, {
+          method: 'POST',
+          body: blob
+        });
+      } catch (_) {
+        // Si no hay endpoint de guardado en servidor, descargar en el navegador si fue manual
+      }
+      resolve(blob);
+    };
+
+    recorder.start(200);
+    setTimeout(() => {
+      if (recorder.state !== 'inactive') recorder.stop();
+    }, durationMs);
+  });
+};
+
+window.recordAllAnchorVideos = async function () {
+  if (!map || !mapReady) return;
+  for (const anchor of ANCHOR_POINTS) {
+    Reveal.slide(anchor.slideIndex);
+    // Esperar un instante para capturar tanto la llegada del flyTo como la órbita suave
+    await new Promise((r) => setTimeout(r, 800));
+    await window.recordSingleAnchorClip(anchor, 5200);
+  }
+  window.__AUTOCAPTURE_DONE = true;
+};
