@@ -120,7 +120,8 @@ html, body {
   -webkit-backdrop-filter: blur(22px) saturate(150%);
   animation: liquidGasMesh 14s ease-in-out infinite alternate;
   opacity: 0;
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+  transition: opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Nubes orgánicas flotantes con mayor presencia cromática para hacer evidente el efecto "Gas" */
@@ -205,12 +206,9 @@ html, body {
   opacity: 0.96;
 }
 
-/* En las diapositivas geoespaciales (Slides 4 a 9), el mapa satelital 3D queda 100% descubierto */
+/* En las diapositivas geoespaciales (Slides 4 a 9), el velo se desvanece suavemente hasta opacidad 0 */
 body.mode-map .map-backdrop {
   opacity: 0 !important;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
 }
 
 /* Contenedor de Reveal.js encima del mapa */

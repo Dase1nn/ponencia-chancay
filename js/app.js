@@ -287,7 +287,7 @@ map.on('style.load', () => {
 
   map.setTerrain({
     source: 'mapbox-dem',
-    exaggeration: 2.5
+    exaggeration: 1.85
   });
 
   // 4. EXTRUSIÓN DE EDIFICIOS 3D (nacen directamente de la fotografía satelital)
@@ -512,21 +512,48 @@ map.on('style.load', () => {
 });
 
 // Actualizar telemetría en tiempo real durante el vuelo de helicóptero
+// Actualizar telemetría con requestAnimationFrame para evitar micro-pausas de DOM durante el vuelo 60fps
+let telemetryRaf = null;
 map.on('move', () => {
-  const center = map.getCenter();
-  const zoom = map.getZoom().toFixed(1);
-  const pitch = Math.round(map.getPitch());
+  if (telemetryRaf) return;
+  telemetryRaf = requestAnimationFrame(() => {
+    const center = map.getCenter();
+    const zoom = map.getZoom().toFixed(1);
+    const pitch = Math.round(map.getPitch());
 
-  const coordsEl = document.getElementById('tel-coords');
-  const cameraEl = document.getElementById('tel-camera');
+    const coordsEl = document.getElementById('tel-coords');
+    const cameraEl = document.getElementById('tel-camera');
 
-  if (coordsEl) {
-    coordsEl.textContent = `${Math.abs(center.lng).toFixed(4)}°W, ${Math.abs(center.lat).toFixed(4)}°S`;
-  }
-  if (cameraEl) {
-    cameraEl.textContent = `${zoom}x · ${pitch}°`;
-  }
+    if (coordsEl) {
+      coordsEl.textContent = `${Math.abs(center.lng).toFixed(4)}°W, ${Math.abs(center.lat).toFixed(4)}°S`;
+    }
+    if (cameraEl) {
+      cameraEl.textContent = `${zoom}x · ${pitch}°`;
+    }
+    telemetryRaf = null;
+  });
 });
+
+// Función de suavizado sinusoidal (easeInOutSine): aceleración y frenado orgánicos sin tirones en zoom in / zoom out
+function cinematicEasing(t) {
+  return -(Math.cos(Math.PI * t) - 1) / 2;
+}
+
+// Calcula el centro geográfico desplazado hacia la derecha de la cámara (según zoom y bearing)
+// para que el marcador quede en la mitad izquierda libre de la pantalla sin usar `offset` brusco sobre el terreno 3D
+function getSplitScreenCenter(coords, zoomLevel, bearingLevel) {
+  const [lng, lat] = coords;
+  const shiftPixelsRight = window.innerWidth * 0.21;
+  const worldSize = 512 * Math.pow(2, zoomLevel);
+  const degPerPixel = 360 / worldSize;
+  const rightAngleRad = ((bearingLevel + 90) * Math.PI) / 180;
+  const latRad = (lat * Math.PI) / 180;
+
+  const dLng = shiftPixelsRight * degPerPixel * Math.sin(rightAngleRad);
+  const dLat = shiftPixelsRight * degPerPixel * Math.cos(rightAngleRad) * Math.cos(latRad);
+
+  return [lng + dLng, lat + dLat];
+}
 
 // 5. INICIALIZACIÓN DE REVEAL.JS v5
 Reveal.initialize({
@@ -535,7 +562,7 @@ Reveal.initialize({
   center: true,
   hash: true,
   transition: 'fade',
-  transitionSpeed: 'default',
+  transitionSpeed: 'slow',
   backgroundTransition: 'none',
   width: '100%',
   height: '100%',
@@ -544,7 +571,7 @@ Reveal.initialize({
   maxScale: 1
 });
 
-// 6. FUNCIÓN DE SINCRONIZACIÓN DE CÁMARA ("EFECTO HELICÓPTERO" + ENCUADRE SPLIT CON PADDING DERECHO)
+// 6. FUNCIÓN DE SINCRONIZACIÓN DE CÁMARA ("EFECTO HELICÓPTERO" FLUIDO + ENCUADRE SPLIT BALANCEADO)
 function syncSlideWithMap(slideElement, slideIndex) {
   if (!slideElement) return;
 
@@ -587,32 +614,43 @@ function syncSlideWithMap(slideElement, slideIndex) {
     }
   });
 
-  // Leer atributos de cámara de la diapositiva y ejecutar map.flyTo() con encuadre split balanceado
+  // Leer atributos de cámara de la diapositiva y ejecutar transición cinemática ultra-suave
   const centerAttr = slideElement.getAttribute('data-center');
   if (centerAttr && mapReady) {
-    const coords = centerAttr.split(',').map(Number);
-    const zoomLevel = parseFloat(slideElement.getAttribute('data-zoom') || '13');
-    const pitchLevel = parseFloat(slideElement.getAttribute('data-pitch') || '55');
+    const rawCoords = centerAttr.split(',').map(Number);
+    const zoomLevel = parseFloat(slideElement.getAttribute('data-zoom') || '13.2');
+    const pitchLevel = parseFloat(slideElement.getAttribute('data-pitch') || '50');
     const bearingLevel = parseFloat(slideElement.getAttribute('data-bearing') || '0');
-    const speed = parseFloat(slideElement.getAttribute('data-speed') || '0.7');
-    const curve = parseFloat(slideElement.getAttribute('data-curve') || '1.8');
+    const duration = parseFloat(slideElement.getAttribute('data-duration') || '3400');
+    const curve = parseFloat(slideElement.getAttribute('data-curve') || '1.25');
 
-    // En las slides de mapa (4 a 9), desplazamos el punto focal al centro de la mitad izquierda libre (-23.5% del ancho de pantalla)
-    const targetOffset = isMapSlide
-      ? [-Math.round(window.innerWidth * 0.235), 0]
-      : [0, 0];
+    // En las diapositivas de mapa (4 a 9), calculamos el centro geográfico compensado para ubicar el punto en la mitad izquierda
+    const targetCenter = isMapSlide
+      ? getSplitScreenCenter(rawCoords, zoomLevel, bearingLevel)
+      : rawCoords;
 
-    map.flyTo({
-      center: coords,
-      zoom: zoomLevel,
-      pitch: pitchLevel,
-      bearing: bearingLevel,
-      padding: { top: 0, bottom: 0, left: 0, right: 0 },
-      offset: targetOffset,
-      speed: speed,
-      curve: curve,
-      essential: true
-    });
+    if (isMapSlide) {
+      map.flyTo({
+        center: targetCenter,
+        zoom: zoomLevel,
+        pitch: pitchLevel,
+        bearing: bearingLevel,
+        duration: duration,
+        curve: curve,
+        easing: cinematicEasing,
+        essential: true
+      });
+    } else {
+      map.easeTo({
+        center: targetCenter,
+        zoom: zoomLevel,
+        pitch: pitchLevel,
+        bearing: bearingLevel,
+        duration: 2400,
+        easing: cinematicEasing,
+        essential: true
+      });
+    }
 
     // Ajustar intensidad de las capas GeoJSON cuando estamos en la Slide 7 (Ancla 4 - Vía de Evitamiento)
     const isViasSlide = slideElement.getAttribute('data-geojson') === 'vias';
