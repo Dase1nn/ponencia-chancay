@@ -1495,7 +1495,7 @@ strong {
 }
 
 /* ==========================================================================
-   10. MARCADORES MAPBOX (PULSO + ETIQUETA LIQUID GLASS CLARA)
+   10. MARCADORES MAPBOX (PULSO + ESCALADO PROTAGÓNICO DEL PUNTO ACTIVO)
    ========================================================================== */
 .custom-marker {
   display: flex;
@@ -1503,6 +1503,19 @@ strong {
   align-items: center;
   cursor: pointer;
   user-select: none;
+  z-index: 5;
+  opacity: 0.72;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.custom-marker:hover {
+  opacity: 0.95;
+  z-index: 25;
+}
+
+.custom-marker.active-anchor {
+  z-index: 60 !important;
+  opacity: 1;
 }
 
 .marker-pin-wrap {
@@ -1512,6 +1525,12 @@ strong {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1), height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.custom-marker.active-anchor .marker-pin-wrap {
+  width: 54px;
+  height: 54px;
 }
 
 .marker-core {
@@ -1522,7 +1541,14 @@ strong {
   border: 2.5px solid #ffffff;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.45);
   z-index: 2;
-  transition: transform 0.25s ease;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.custom-marker.active-anchor .marker-core {
+  width: 28px;
+  height: 28px;
+  border: 4px solid #ffffff;
+  box-shadow: 0 0 26px rgba(217, 119, 6, 0.9), 0 6px 18px rgba(15, 23, 42, 0.55);
 }
 
 .marker-pulse {
@@ -1530,53 +1556,88 @@ strong {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(217, 119, 6, 0.45);
+  background: rgba(217, 119, 6, 0.42);
   animation: pulseRing 2.2s infinite cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 1;
+}
+
+.custom-marker.active-anchor .marker-pulse {
+  width: 54px;
+  height: 54px;
+  background: rgba(217, 119, 6, 0.58);
+  animation: pulseRingActive 1.75s infinite cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .custom-marker.marker-cyan .marker-core {
   background: var(--accent-cobalt-vivid);
 }
 
+.custom-marker.marker-cyan.active-anchor .marker-core {
+  box-shadow: 0 0 26px rgba(2, 132, 199, 0.9), 0 6px 18px rgba(15, 23, 42, 0.55);
+}
+
 .custom-marker.marker-cyan .marker-pulse {
-  background: rgba(2, 132, 199, 0.45);
+  background: rgba(2, 132, 199, 0.42);
+}
+
+.custom-marker.marker-cyan.active-anchor .marker-pulse {
+  background: rgba(2, 132, 199, 0.58);
 }
 
 .custom-marker.marker-rose .marker-core {
   background: var(--accent-rose-vivid);
 }
 
-.custom-marker.marker-rose .marker-pulse {
-  background: rgba(225, 29, 72, 0.45);
+.custom-marker.marker-rose.active-anchor .marker-core {
+  box-shadow: 0 0 26px rgba(225, 29, 72, 0.9), 0 6px 18px rgba(15, 23, 42, 0.55);
 }
 
-.custom-marker.active-anchor .marker-core {
-  transform: scale(1.35);
+.custom-marker.marker-rose .marker-pulse {
+  background: rgba(225, 29, 72, 0.42);
+}
+
+.custom-marker.marker-rose.active-anchor .marker-pulse {
+  background: rgba(225, 29, 72, 0.58);
 }
 
 .marker-label {
   margin-top: 4px;
   padding: 4px 10px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.84);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.9);
   color: var(--text-navy-deep);
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
   white-space: nowrap;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
-  transition: all 0.25s ease;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .custom-marker.active-anchor .marker-label {
-  border-color: var(--accent-amber-vivid);
-  background: rgba(255, 255, 255, 0.96);
-  color: var(--accent-amber);
+  margin-top: 8px;
+  padding: 9px 18px;
+  border-radius: 12px;
+  border: 2px solid var(--accent-amber-vivid);
+  background: rgba(255, 255, 255, 0.97);
+  color: var(--text-navy-deep);
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.38), 0 0 0 4px rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
+}
+
+.custom-marker.marker-cyan.active-anchor .marker-label {
+  border-color: var(--accent-cobalt-vivid);
+}
+
+.custom-marker.marker-rose.active-anchor .marker-label {
+  border-color: var(--accent-rose-vivid);
 }
 
 @keyframes pulseRing {
@@ -1586,6 +1647,17 @@ strong {
   }
   80%, 100% {
     transform: scale(2.35);
+    opacity: 0;
+  }
+}
+
+@keyframes pulseRingActive {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  80%, 100% {
+    transform: scale(2.85);
     opacity: 0;
   }
 }
