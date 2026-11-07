@@ -1,0 +1,1628 @@
+/* ==========================================================================
+   1. CSS CUSTOM PROPERTIES (:root) — TEMA CLARO "LIQUID GLASS" ACADÉMICO
+   ========================================================================== */
+:root {
+  /* Paleta Base & Fondo Gaseoso (Mesh Gradient) */
+  --bg-pearl: #f8fafc;
+  --bg-ice-cyan: #e0f2fe;
+  --bg-soft-sky: #bae6fd;
+  --bg-pale-lavender: #ede9fe;
+  --bg-warm-mist: #fef3c7;
+
+  /* Propiedades Nucleares "Liquid Glass" (Estado original de transparencia) */
+  --glass-bg: rgba(255, 255, 255, 0.52);
+  --glass-bg-geo: rgba(255, 255, 255, 0.72);
+  --glass-bg-inner: rgba(255, 255, 255, 0.62);
+  --glass-bg-pill: rgba(255, 255, 255, 0.76);
+  --glass-blur: blur(24px) saturate(150%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+  --glass-border-strong: 1px solid rgba(255, 255, 255, 0.82);
+  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+  --glass-shadow-elevated: 0 14px 40px rgba(31, 38, 135, 0.11), 0 2px 10px rgba(15, 23, 42, 0.04);
+  --glass-specular: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.28) 35%,
+    rgba(255, 255, 255, 0) 68%
+  );
+
+  /* Tipografía de Alto Contraste (Prohibido #000000 o grises ilegibles) */
+  --text-navy-deep: #0f172a;     /* Títulos y datos primarios */
+  --text-charcoal: #1e293b;      /* Párrafos y cuerpo académico */
+  --text-slate-medium: #334155;  /* Subtítulos y metadatos */
+  --text-halo: 0px 1px 2px rgba(255, 255, 255, 0.8);
+
+  /* Acentos Vibrantes y Equilibrados (Armonizados para Fondo Claro) */
+  --accent-cobalt: #1d4ed8;
+  --accent-cobalt-vivid: #0284c7;
+  --accent-cobalt-soft: rgba(2, 132, 199, 0.12);
+  --accent-cobalt-border: rgba(2, 132, 199, 0.35);
+
+  --accent-amber: #b45309;
+  --accent-amber-vivid: #d97706;
+  --accent-amber-soft: rgba(217, 119, 6, 0.13);
+  --accent-amber-border: rgba(217, 119, 6, 0.38);
+
+  --accent-rose: #be123c;
+  --accent-rose-vivid: #e11d48;
+  --accent-rose-soft: rgba(225, 29, 72, 0.11);
+  --accent-rose-border: rgba(225, 29, 72, 0.34);
+
+  --accent-emerald: #047857;
+  --accent-emerald-vivid: #059669;
+  --accent-emerald-soft: rgba(5, 150, 105, 0.12);
+  --accent-emerald-border: rgba(5, 150, 105, 0.35);
+
+  /* Familias Tipográficas */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ==========================================================================
+   2. RESET BASE & PROTECCIÓN DE LEGIBILIDAD
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-pearl);
+  color: var(--text-charcoal);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: var(--text-halo);
+}
+
+/* ==========================================================================
+   3. ARQUITECTURA HÍBRIDA: MAPA 3D + FONDO ANIMADO EFECTO "GAS" (MESH GRADIENT)
+   ========================================================================== */
+#map,
+#map .mapboxgl-canvas {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+#map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* Fondo "Gas / Cristal Líquido" para Slides Convencionales (1–3 y 10–12) */
+.map-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: var(--bg-pearl);
+  background-image:
+    radial-gradient(at 15% 20%, rgba(56, 189, 248, 0.55) 0px, transparent 52%),
+    radial-gradient(at 85% 18%, rgba(167, 139, 250, 0.48) 0px, transparent 50%),
+    radial-gradient(at 78% 82%, rgba(34, 211, 238, 0.46) 0px, transparent 54%),
+    radial-gradient(at 20% 80%, rgba(251, 191, 36, 0.34) 0px, transparent 48%),
+    radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.94) 0px, transparent 62%);
+  background-size: 200% 200%;
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  animation: liquidGasMesh 14s ease-in-out infinite alternate;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Nubes orgánicas flotantes con mayor presencia cromática para hacer evidente el efecto "Gas" */
+.map-backdrop::before,
+.map-backdrop::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(52px);
+  opacity: 0.92;
+  pointer-events: none;
+  mix-blend-mode: normal;
+}
+
+.map-backdrop::before {
+  width: 62vw;
+  height: 62vw;
+  top: -18vw;
+  left: -12vw;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.62) 0%,
+    rgba(125, 211, 252, 0.38) 45%,
+    rgba(251, 191, 36, 0.18) 68%,
+    transparent 82%
+  );
+  animation: gasCloudDriftA 15s ease-in-out infinite alternate;
+}
+
+.map-backdrop::after {
+  width: 58vw;
+  height: 58vw;
+  bottom: -16vw;
+  right: -10vw;
+  background: radial-gradient(
+    circle,
+    rgba(167, 139, 250, 0.56) 0%,
+    rgba(34, 211, 238, 0.42) 48%,
+    rgba(186, 230, 253, 0.22) 70%,
+    transparent 84%
+  );
+  animation: gasCloudDriftB 13s ease-in-out infinite alternate;
+}
+
+@keyframes liquidGasMesh {
+  0% {
+    background-position: 0% 10%;
+  }
+  50% {
+    background-position: 100% 90%;
+  }
+  100% {
+    background-position: 20% 50%;
+  }
+}
+
+@keyframes gasCloudDriftA {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(22vw, 14vh, 0) scale(1.22) rotate(12deg);
+  }
+  100% {
+    transform: translate3d(8vw, 22vh, 0) scale(0.92) rotate(-8deg);
+  }
+}
+
+@keyframes gasCloudDriftB {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-24vw, -15vh, 0) scale(1.2) rotate(-14deg);
+  }
+  100% {
+    transform: translate3d(-10vw, -6vh, 0) scale(0.94) rotate(10deg);
+  }
+}
+
+.map-backdrop.active {
+  opacity: 0.96;
+}
+
+/* En las diapositivas geoespaciales (Slides 4 a 9), el mapa satelital 3D queda 100% descubierto */
+body.mode-map .map-backdrop {
+  opacity: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Contenedor de Reveal.js encima del mapa */
+.reveal {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}
+
+body.mode-map .reveal,
+body.mode-map .reveal .slides,
+body.mode-map .reveal .slides > section {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Modo exploración libre del mapa */
+body.free-map-mode .reveal {
+  opacity: 0.14;
+  transition: opacity 0.35s ease;
+}
+
+body.free-map-mode .reveal:hover {
+  opacity: 0.96;
+}
+
+.reveal .slides {
+  text-align: left;
+  pointer-events: none;
+}
+
+.reveal .slides > section {
+  padding: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   4. SISTEMA DE PANELES "LIQUID GLASS" + BRILLO ESPECULAR (::before)
+   ========================================================================== */
+.glass-card,
+.theory-card,
+.summary-pill,
+.veto-column,
+.conclusion-card,
+.proposal-col,
+.geo-card,
+.methodology-banner,
+.theoretical-takeaway {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Brillo especular en el borde superior izquierdo simulando el grosor del cristal */
+.glass-card::before,
+.theory-card::before,
+.summary-pill::before,
+.veto-column::before,
+.conclusion-card::before,
+.proposal-col::before,
+.geo-card::before,
+.methodology-banner::before,
+.theoretical-takeaway::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: var(--glass-specular);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.65;
+}
+
+/* Garantizar que el contenido interno quede por encima del reflejo especular */
+.glass-card > *,
+.theory-card > *,
+.summary-pill > *,
+.veto-column > *,
+.conclusion-card > *,
+.proposal-col > *,
+.geo-card > *,
+.methodology-banner > *,
+.theoretical-takeaway > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   5. HUD SUPERIOR & BARRA DE ZONAS ANCLA (LIQUID GLASS)
+   ========================================================================== */
+.hud-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: var(--glass-border);
+  box-shadow: 0 4px 20px rgba(31, 38, 135, 0.05);
+}
+
+.hud-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-charcoal);
+}
+
+.hud-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-cobalt-vivid);
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.55);
+}
+
+.hud-divider {
+  color: var(--text-slate-medium);
+}
+
+.hud-case {
+  color: var(--accent-cobalt);
+  font-weight: 700;
+}
+
+.hud-telemetry {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass-bg-pill);
+  border: var(--glass-border-strong);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.04);
+}
+
+.telemetry-label {
+  color: var(--text-slate-medium);
+  font-weight: 500;
+}
+
+.telemetry-value {
+  color: var(--accent-cobalt);
+  font-weight: 700;
+}
+
+.btn-hud-interact {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-amber-border);
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text-navy-deep);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btn-hud-interact:hover {
+  background: rgba(254, 243, 199, 0.85);
+  transform: translateY(-1px);
+}
+
+.btn-hud-interact.active {
+  background: var(--accent-amber-vivid);
+  color: #ffffff;
+  text-shadow: none;
+}
+
+.interact-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-amber-vivid);
+}
+
+.btn-hud-interact.active .interact-indicator {
+  background: #ffffff;
+}
+
+.hud-progress-pill {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-navy-deep);
+  background: var(--glass-bg-pill);
+  border: var(--glass-border-strong);
+  padding: 5px 14px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.05);
+}
+
+/* Barra inferior de Zonas Ancla (Liquid Glass) */
+.anchor-nav {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border-strong);
+  box-shadow: var(--glass-shadow-elevated);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.mode-map .anchor-nav {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.anchor-chip {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-charcoal);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 6px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.anchor-chip:hover {
+  color: var(--text-navy-deep);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.anchor-chip.active {
+  background: var(--accent-cobalt-soft);
+  border-color: var(--accent-cobalt-border);
+  color: var(--accent-cobalt);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   6. JERARQUÍA TIPOGRÁFICA Y ELEMENTOS ACADÉMICOS COMUNES
+   ========================================================================== */
+.conventional-slide {
+  width: 100%;
+  max-width: 1260px;
+  padding: 62px 40px 32px;
+  margin: 0 auto;
+  pointer-events: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-navy-deep);
+  margin: 0;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+p, li {
+  color: var(--text-charcoal);
+  font-weight: 400;
+}
+
+strong {
+  color: var(--text-navy-deep);
+  font-weight: 600;
+}
+
+.text-gradient {
+  display: block;
+  background: linear-gradient(90deg, #1d4ed8 0%, #0284c7 52%, #b45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+.text-amber { color: var(--accent-amber) !important; }
+.text-cyan  { color: var(--accent-cobalt) !important; }
+.text-rose  { color: var(--accent-rose) !important; }
+
+/* Badges / Pills con alto contraste sobre cristal claro */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-amber {
+  background: var(--accent-amber-soft);
+  color: var(--accent-amber);
+  border: 1px solid var(--accent-amber-border);
+}
+
+.badge-cyan {
+  background: var(--accent-cobalt-soft);
+  color: var(--accent-cobalt);
+  border: 1px solid var(--accent-cobalt-border);
+}
+
+.badge-rose {
+  background: var(--accent-rose-soft);
+  color: var(--accent-rose);
+  border: 1px solid var(--accent-rose-border);
+}
+
+/* ==========================================================================
+   7. SLIDES 1–3: PORTADA, PROBLEMA PÚBLICO Y MARCO TEÓRICO
+   ========================================================================== */
+.hero-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-title {
+  font-size: clamp(1.95rem, 3.1vw, 2.95rem);
+  font-weight: 700;
+  color: var(--text-navy-deep);
+  max-width: 1140px;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  color: var(--text-charcoal);
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 1040px;
+  border-left: 4px solid var(--accent-cobalt-vivid);
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.42);
+  border-radius: 0 12px 12px 0;
+}
+
+.hero-grid-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 6px;
+}
+
+.summary-pill {
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+.summary-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-cobalt);
+  margin-bottom: 6px;
+}
+
+.summary-pill strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-navy-deep);
+  margin-bottom: 6px;
+}
+
+.summary-pill p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-charcoal);
+}
+
+.hero-footer-hint {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: var(--text-slate-medium);
+}
+
+.hero-footer-hint kbd {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-navy-deep);
+}
+
+/* Encabezados de Sección */
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent-cobalt);
+  margin-bottom: 6px;
+}
+
+.section-header h2 {
+  font-size: clamp(1.5rem, 2.2vw, 2.05rem);
+  font-weight: 700;
+  color: var(--text-navy-deep);
+}
+
+.section-lead {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-charcoal);
+  max-width: 980px;
+}
+
+/* Slide 2: Asimetría Escalar */
+.asymmetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.glass-card {
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-highlight-amber {
+  border-top: 3px solid var(--accent-amber-vivid);
+}
+
+.card-highlight-cyan {
+  border-top: 3px solid var(--accent-cobalt-vivid);
+}
+
+.card-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-slate-medium);
+  margin-bottom: 6px;
+}
+
+.glass-card h3 {
+  font-size: 1.24rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.comparison-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.comp-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-navy-deep);
+}
+
+.comp-number {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(15, 23, 42, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.fill-amber {
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+}
+
+.fill-cyan {
+  background: linear-gradient(90deg, #1d4ed8, #0284c7);
+}
+
+.comp-note {
+  font-size: 0.79rem;
+  color: var(--text-slate-medium);
+}
+
+.stat-callout {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--accent-amber-soft);
+  border: 1px solid var(--accent-amber-border);
+  font-size: 0.85rem;
+  color: var(--text-charcoal);
+}
+
+.metric-Comparison-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.metric-box {
+  flex: 1;
+  background: var(--glass-bg-inner);
+  border: var(--glass-border-strong);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.metric-box-accent {
+  border-color: var(--accent-cobalt-border);
+  background: var(--accent-cobalt-soft);
+}
+
+.metric-sub {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-slate-medium);
+  text-transform: uppercase;
+}
+
+.metric-big {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.95rem;
+  font-weight: 700;
+  color: var(--text-navy-deep);
+  margin: 4px 0;
+}
+
+.metric-unit {
+  font-size: 0.8rem;
+  color: var(--text-charcoal);
+}
+
+.metric-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+}
+
+.housing-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.housing-pill {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+  background: var(--glass-bg-inner);
+  border: var(--glass-border-strong);
+  border-radius: 12px;
+}
+
+.housing-val {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  min-width: 92px;
+}
+
+.housing-desc {
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--text-charcoal);
+}
+
+/* Slide 3: Marco Teórico y Metodología */
+.three-col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.theory-card {
+  border-radius: 18px;
+  padding: 20px 22px;
+}
+
+.theory-index {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.14);
+}
+
+.theory-card h3 {
+  font-size: 1.14rem;
+  font-weight: 700;
+  margin: 10px 0 4px;
+}
+
+.theory-author {
+  margin: 0 0 10px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--accent-amber);
+}
+
+.theory-body {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-charcoal);
+  margin: 0 0 10px;
+}
+
+.clean-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clean-list li {
+  font-size: 0.83rem;
+  line-height: 1.42;
+  color: var(--text-charcoal);
+}
+
+.methodology-banner {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--accent-cobalt-border);
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.method-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-cobalt);
+  white-space: nowrap;
+  padding-right: 14px;
+  border-right: 1px solid var(--accent-cobalt-border);
+}
+
+.method-content {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text-charcoal);
+}
+
+/* ==========================================================================
+   8. SLIDES GEOESPACIALES (SLIDES 4–9) — TARJETA "LIQUID GLASS" SOBRE MAPA 3D
+   ========================================================================== */
+.map-slide-wrapper {
+  width: 100vw;
+  height: 100vh;
+  padding: 72px 36px 76px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.map-slide-wrapper.align-left {
+  justify-content: flex-start;
+}
+
+.map-slide-wrapper.align-right {
+  justify-content: flex-end;
+}
+
+/* Tarjeta Liquid Glass ampliada en el panel derecho (encuadre split balanceado) */
+.geo-card {
+  width: 44vw;
+  min-width: 480px;
+  max-width: 680px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  background: var(--glass-bg-geo);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border-strong);
+  border-radius: 22px;
+  padding: 30px 34px;
+  box-shadow: var(--glass-shadow-elevated);
+  pointer-events: auto;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.geo-card::-webkit-scrollbar {
+  width: 5px;
+}
+
+.geo-card::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.22);
+  border-radius: 999px;
+}
+
+.geo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.geo-coords {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-slate-medium);
+}
+
+.geo-card h2 {
+  font-size: 1.56rem;
+  font-weight: 700;
+  color: var(--text-navy-deep);
+  margin-bottom: 14px;
+}
+
+.geo-lead {
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: var(--text-charcoal);
+  margin: 0 0 18px;
+}
+
+/* KPI Strip (Slide 4) */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.kpi-box {
+  background: var(--glass-bg-pill);
+  border: var(--glass-border-strong);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(31, 38, 135, 0.04);
+}
+
+.kpi-amber { border-top: 3px solid var(--accent-amber-vivid); }
+.kpi-rose  { border-top: 3px solid var(--accent-rose-vivid); }
+.kpi-cyan  { border-top: 3px solid var(--accent-cobalt-vivid); }
+
+.kpi-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.78rem;
+  font-weight: 700;
+  color: var(--text-navy-deep);
+  margin-bottom: 4px;
+}
+
+.kpi-label {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--text-charcoal);
+}
+
+.geo-insight {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--accent-cobalt-border);
+  border-left: 4px solid var(--accent-cobalt-vivid);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-charcoal);
+}
+
+.geo-insight.insight-amber {
+  border-color: var(--accent-amber-border);
+  border-left-color: var(--accent-amber-vivid);
+}
+
+.geo-insight.insight-rose {
+  border-color: var(--accent-rose-border);
+  border-left-color: var(--accent-rose-vivid);
+}
+
+/* Actor banner (Slides 5 & 9) */
+.actor-banner {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--accent-amber-border);
+  border-left: 4px solid var(--accent-amber-vivid);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.actor-banner.banner-rose {
+  border-color: var(--accent-rose-border);
+  border-left-color: var(--accent-rose-vivid);
+}
+
+.actor-role {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-amber);
+  text-transform: uppercase;
+}
+
+.banner-rose .actor-role {
+  color: var(--accent-rose);
+}
+
+.actor-banner strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-navy-deep);
+}
+
+.geo-list {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.geo-list li {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-charcoal);
+}
+
+/* Dual Incident Box (Slide 6) */
+.dual-incident-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.incident-item {
+  background: var(--glass-bg-pill);
+  border: var(--glass-border-strong);
+  border-radius: 14px;
+  padding: 15px 18px;
+}
+
+.incident-rose { border-left: 4px solid var(--accent-rose-vivid); }
+.incident-amber { border-left: 4px solid var(--accent-amber-vivid); }
+
+.incident-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+  margin-bottom: 4px;
+}
+
+.incident-rose .incident-tag {
+  color: var(--accent-rose);
+}
+
+.incident-item h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-navy-deep);
+}
+
+.incident-item p {
+  margin: 0;
+  font-size: 0.89rem;
+  line-height: 1.48;
+  color: var(--text-charcoal);
+}
+
+/* Slide 7: Leyenda GeoJSON Vías */
+.map-legend-box {
+  background: var(--glass-bg-pill);
+  border: var(--glass-border-strong);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.89rem;
+  line-height: 1.45;
+  color: var(--text-charcoal);
+}
+
+.legend-line {
+  width: 40px;
+  height: 0;
+  flex-shrink: 0;
+}
+
+.line-mtc {
+  border-top: 4px dashed #dc2626;
+}
+
+.line-pdu {
+  border-top: 4px solid #0284c7;
+}
+
+.highlight-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid var(--accent-amber-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.big-badge-number {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+  line-height: 1;
+}
+
+.big-badge-text {
+  font-size: 0.89rem;
+  line-height: 1.45;
+  color: var(--text-charcoal);
+}
+
+/* Slide 8: TOPP Grid */
+.topp-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.topp-cell {
+  background: var(--glass-bg-pill);
+  border: var(--glass-border-strong);
+  border-radius: 12px;
+  padding: 13px 16px;
+}
+
+.topp-cell-highlight {
+  border-color: var(--accent-amber-border);
+  background: rgba(254, 243, 199, 0.55);
+}
+
+.topp-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--accent-cobalt);
+  margin-bottom: 4px;
+}
+
+.topp-cell p {
+  margin: 0;
+  font-size: 0.89rem;
+  line-height: 1.48;
+  color: var(--text-charcoal);
+}
+
+/* ==========================================================================
+   9. SLIDES 10–12: MATRIZ DE VETO, CONCLUSIONES Y PROPUESTAS (LIQUID GLASS)
+   ========================================================================== */
+.veto-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.veto-column {
+  border-radius: 18px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.veto-formal { border-top: 3px solid var(--accent-cobalt-vivid); }
+.veto-facto  { border-top: 3px solid var(--accent-amber-vivid); }
+
+.veto-col-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+
+.veto-col-header p {
+  margin: 0 0 14px;
+  font-size: 0.83rem;
+  color: var(--text-slate-medium);
+}
+
+.veto-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.veto-row {
+  background: var(--glass-bg-inner);
+  border: var(--glass-border-strong);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.veto-actor {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-cobalt);
+  margin-bottom: 3px;
+}
+
+.veto-power {
+  font-size: 0.81rem;
+  line-height: 1.38;
+  color: var(--text-charcoal);
+}
+
+.winset-synthesis {
+  margin-top: 14px;
+  padding: 13px 15px;
+  border-radius: 12px;
+  background: var(--accent-rose-soft);
+  border: 1px solid var(--accent-rose-border);
+}
+
+.winset-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-rose);
+  margin-bottom: 4px;
+}
+
+.winset-synthesis p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.42;
+  color: var(--text-charcoal);
+}
+
+/* Slide 11: Conclusiones */
+.conclusion-card {
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.conclusion-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-cobalt-soft);
+  border: 1px solid var(--accent-cobalt-border);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-cobalt);
+  margin-bottom: 12px;
+}
+
+.conclusion-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.conclusion-card p {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: var(--text-charcoal);
+}
+
+.theoretical-takeaway {
+  margin-top: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--accent-amber-border);
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.takeaway-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--accent-amber-vivid);
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  text-shadow: none;
+}
+
+.theoretical-takeaway p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-navy-deep);
+}
+
+/* Slide 12: Propuestas en 3 columnas */
+.proposal-col {
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.col-cyan    { border-top: 3px solid var(--accent-cobalt-vivid); }
+.col-amber   { border-top: 3px solid var(--accent-amber-vivid); }
+.col-emerald { border-top: 3px solid var(--accent-emerald-vivid); }
+
+.proposal-header {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.proposal-step {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+  margin-bottom: 4px;
+}
+
+.proposal-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.proposal-body h4 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--accent-cobalt);
+  margin-bottom: 8px;
+}
+
+.proposal-body p {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text-charcoal);
+  margin: 0 0 12px;
+}
+
+.actor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.actor-tags span {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--accent-cobalt-soft);
+  border: 1px solid var(--accent-cobalt-border);
+  color: var(--text-navy-deep);
+}
+
+.proposal-impact {
+  padding: 10px 12px;
+  background: var(--glass-bg-inner);
+  border-radius: 10px;
+  border-left: 3px solid var(--accent-cobalt-vivid);
+}
+
+/* ==========================================================================
+   10. MARCADORES MAPBOX (PULSO + ETIQUETA LIQUID GLASS CLARA)
+   ========================================================================== */
+.custom-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.marker-pin-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-amber-vivid);
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.45);
+  z-index: 2;
+  transition: transform 0.25s ease;
+}
+
+.marker-pulse {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(217, 119, 6, 0.45);
+  animation: pulseRing 2.2s infinite cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 1;
+}
+
+.custom-marker.marker-cyan .marker-core {
+  background: var(--accent-cobalt-vivid);
+}
+
+.custom-marker.marker-cyan .marker-pulse {
+  background: rgba(2, 132, 199, 0.45);
+}
+
+.custom-marker.marker-rose .marker-core {
+  background: var(--accent-rose-vivid);
+}
+
+.custom-marker.marker-rose .marker-pulse {
+  background: rgba(225, 29, 72, 0.45);
+}
+
+.custom-marker.active-anchor .marker-core {
+  transform: scale(1.35);
+}
+
+.marker-label {
+  margin-top: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: var(--text-navy-deep);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+  transition: all 0.25s ease;
+}
+
+.custom-marker.active-anchor .marker-label {
+  border-color: var(--accent-amber-vivid);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--accent-amber);
+  transform: translateY(-2px);
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.95;
+  }
+  80%, 100% {
+    transform: scale(2.35);
+    opacity: 0;
+  }
+}
+
+/* Controles nativos de Reveal.js adaptados al Tema Claro Liquid Glass */
+.reveal .controls {
+  bottom: 18px !important;
+  right: 22px !important;
+  z-index: 35 !important;
+  pointer-events: auto !important;
+  color: var(--accent-cobalt) !important;
+}
+
+.reveal .progress {
+  height: 4px !important;
+  background: rgba(15, 23, 42, 0.1) !important;
+  color: var(--accent-cobalt-vivid) !important;
+  z-index: 35 !important;
+}
+
+/* Responsividad */
+@media (max-width: 1180px) {
+  .hero-grid-summary,
+  .three-col-grid,
+  .asymmetry-grid,
+  .veto-matrix {
+    grid-template-columns: 1fr;
+  }
+
+  .geo-card {
+    width: 44vw;
+    min-width: 340px;
+  }
+
+  .hud-telemetry {
+    display: none;
+  }
+}

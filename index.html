@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gobernanza Endógena y Territorial ante Megaproyectos | Caso Chancay (2024–2026)</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Reveal.js v5.x CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+
+  <!-- Mapbox GL JS v3.x CDN -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css?v=5" />
+</head>
+<body class="mode-conventional">
+
+  <!-- FONDO GEOESPACIAL 3D (Mapbox GL JS) -->
+  <div id="map"></div>
+
+  <!-- CAPA DE ESCURECIMIENTO / BLUR PARA SLIDES CONVENCIONALES -->
+  <div id="map-backdrop" class="map-backdrop active"></div>
+
+  <!-- HUD SUPERIOR ACADÉMICO Y TELEMETRÍA GEOESPACIAL -->
+  <header class="hud-header">
+    <div class="hud-brand">
+      <span class="hud-dot"></span>
+      <span class="hud-course">PONENCIA CIENCIA POLÍTICA</span>
+      <span class="hud-divider">/</span>
+      <span class="hud-case">CASO CHANCAY 2024–2026</span>
+    </div>
+
+    <div class="hud-telemetry" id="hud-telemetry">
+      <div class="telemetry-item">
+        <span class="telemetry-label">LON / LAT</span>
+        <span class="telemetry-value" id="tel-coords">77.2680°W, 11.5700°S</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">ZOOM / PITCH</span>
+        <span class="telemetry-value" id="tel-camera">12.8x · 45°</span>
+      </div>
+      <button id="toggle-map-interact" class="btn-hud-interact" title="Activar/Desactivar navegación libre en el mapa 3D">
+        <span class="interact-indicator"></span>
+        <span id="interact-label">Explorar Mapa 3D</span>
+      </button>
+    </div>
+
+    <div class="hud-progress-pill">
+      <span id="slide-counter">01 / 12</span>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN RÁPIDA DE ZONAS ANCLA (VISIBLE EN BLOQUE 2) -->
+  <nav class="anchor-nav" id="anchor-nav" aria-label="Zonas Ancla de Chancay">
+    <button class="anchor-chip" data-slide="3">1. Escala Distrital</button>
+    <button class="anchor-chip" data-slide="4">2. Punta Chancay (Puerto)</button>
+    <button class="anchor-chip" data-slide="5">3. Peralvillo / Cascajo</button>
+    <button class="anchor-chip" data-slide="6">4. Vía Evitamiento (MTC vs PDU)</button>
+    <button class="anchor-chip" data-slide="7">5. MDCH (Plaza de Armas)</button>
+    <button class="anchor-chip" data-slide="8">6. Cerro La Culebra</button>
+  </nav>
+
+  <!-- CONTENEDOR PRINCIPAL REVEAL.JS -->
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===================================================================
+           BLOQUE 1: SLIDES CONVENCIONALES (INTRODUCCIÓN Y MARCO)
+           =================================================================== -->
+
+      <!-- SLIDE 1: PORTADA -->
+      <section
+        data-map="false"
+        data-center="-77.2740,-11.5780"
+        data-zoom="12.2"
+        data-pitch="35"
+        data-bearing="-20"
+        data-speed="0.5"
+        data-curve="1.5">
+        <div class="slide-container conventional-slide hero-slide">
+          <div class="hero-badges">
+            <span class="badge badge-amber">Estudio de Caso Instrumental · Ciencia Política y Gestión Pública</span>
+            <span class="badge badge-cyan">Distrito de Chancay, Huaral (Lima) · 2024–2026</span>
+          </div>
+
+          <h1 class="hero-title">
+            Gobernanza endógena y territorial ante megaproyectos:
+            <span class="text-gradient">Integración urbana y políticas públicas en ciudades pequeñas en transformación</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            El caso del Terminal Portuario Multipropósito y el Plan de Desarrollo Urbano (PDU) de Chancay (2024–2026) · <strong>Pregunta central:</strong> <em>¿Cuáles son las dinámicas institucionales y territoriales que condicionan la integración urbana —físico-espacial, dotacional y regulatoria— en el distrito de Chancay frente a la implantación del Terminal Portuario Multipropósito?</em>
+          </p>
+
+          <div class="hero-grid-summary">
+            <div class="summary-pill">
+              <span class="summary-kicker">Eje Analítico</span>
+              <strong>Asimetría Escalar y Enclave Logístico</strong>
+              <p>Tensión entre inversión globalizada e institucionalidad municipal subnacional.</p>
+            </div>
+            <div class="summary-pill">
+              <span class="summary-kicker">Enfoque Teórico</span>
+              <strong>Gobernanza Multinivel · TOPP · Veto Players</strong>
+              <p>Farinós Dasí (2008, 2015), Salazar-Xirinachs &amp; Boeninger (2025, 2026), Tsebelis (1995, 2002).</p>
+            </div>
+            <div class="summary-pill">
+              <span class="summary-kicker">Recorrido Geoespacial</span>
+              <strong>6 Zonas Ancla en Relieve 3D</strong>
+              <p>Cartografía interactiva de nudos críticos físicos, institucionales y socioterritoriales.</p>
+            </div>
+          </div>
+
+          <div class="hero-footer-hint">
+            <span>Usa las flechas <kbd>←</kbd> <kbd>→</kbd> o <kbd>Espacio</kbd> para avanzar en la ponencia</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: EL PROBLEMA PÚBLICO Y ASIMETRÍA ESCALAR -->
+      <section
+        data-map="false"
+        data-center="-77.2785,-11.5835"
+        data-zoom="13.5"
+        data-pitch="50"
+        data-bearing="25"
+        data-speed="0.6"
+        data-curve="1.6">
+        <div class="slide-container conventional-slide">
+          <div class="section-header">
+            <span class="section-tag">01 · PROBLEMA PÚBLICO Y ASIMETRÍA ESCALAR</span>
+            <h2>Riesgo de la «trampa de gobernanza poco efectiva» y configuración de un enclave logístico</h2>
+            <p class="section-lead">
+              Siguiendo a la <strong>CEPAL (2024, 2025)</strong>, cuando una infraestructura de escala global irrumpe sobre un gobierno local con capacidades debilitadas, se exacerba el desacoplamiento entre la velocidad del flujo logístico transnacional y la dotación territorial básica.
+            </p>
+          </div>
+
+          <div class="asymmetry-grid">
+            <!-- Card 1: Contraste Financiero -->
+            <div class="glass-card card-highlight-amber">
+              <div class="card-kicker">ASIMETRÍA FINANCIERA Y ESCALAR</div>
+              <h3>Shock de Inversión vs. Capacidad Fiscal Local</h3>
+              <div class="comparison-bars">
+                <div class="comp-item">
+                  <div class="comp-header">
+                    <span class="comp-title">Inversión Megapuerto de Chancay (CSPCP)</span>
+                    <span class="comp-number text-amber">&gt; US$ 1,300 Millones</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill fill-amber" style="width: 100%;"></div>
+                  </div>
+                  <span class="comp-note">Equivalente a ~S/ 4,875 millones en su primera etapa operativa.</span>
+                </div>
+
+                <div class="comp-item">
+                  <div class="comp-header">
+                    <span class="comp-title">Presupuesto Municipal MDCH (PIM 2024)</span>
+                    <span class="comp-number text-cyan">S/ 40.9 Millones</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill fill-cyan" style="width: 3.5%;"></div>
+                  </div>
+                  <span class="comp-note">Apenas ~0.8% de la inversión portuaria; 64.5% absorbido por gasto corriente.</span>
+                </div>
+              </div>
+              <div class="stat-callout">
+                <strong>Relación asimétrica ~119:1</strong> entre el capital fijo del megaproyecto y el presupuesto anual total del gobierno local receptor.
+              </div>
+            </div>
+
+            <!-- Card 2: Shock Demográfico y Habitacional -->
+            <div class="glass-card card-highlight-cyan">
+              <div class="card-kicker">PROYECCIÓN DEMOGRÁFICA PDU CHANCAY (2024–2034)</div>
+              <h3>Transición Urbana Acelerada y Presión Habitacional</h3>
+
+              <div class="metric-Comparison-row">
+                <div class="metric-box">
+                  <span class="metric-sub">Población 2024</span>
+                  <span class="metric-big">63,400</span>
+                  <span class="metric-unit">habitantes</span>
+                </div>
+                <div class="metric-arrow">
+                  <span>× 3.4</span>
+                  <div class="arrow-line"></div>
+                </div>
+                <div class="metric-box metric-box-accent">
+                  <span class="metric-sub">Proyección PDU 2034</span>
+                  <span class="metric-big text-cyan">216,033</span>
+                  <span class="metric-unit">habitantes</span>
+                </div>
+              </div>
+
+              <div class="housing-metrics">
+                <div class="housing-pill">
+                  <span class="housing-val text-amber">58,162</span>
+                  <span class="housing-desc"><strong>Nuevas viviendas requeridas</strong> hacia 2034 según escenario tendencial-inducido del PDU.</span>
+                </div>
+                <div class="housing-pill">
+                  <span class="housing-val text-rose">&gt; 14,000</span>
+                  <span class="housing-desc"><strong>Déficit habitacional actual</strong> preexistente (cualitativo y cuantitativo) sin banco de suelos municipal.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: MARCO TEÓRICO Y METODOLOGÍA -->
+      <section
+        data-map="false"
+        data-center="-77.2680,-11.5700"
+        data-zoom="12.5"
+        data-pitch="40"
+        data-bearing="-10"
+        data-speed="0.6"
+        data-curve="1.6">
+        <div class="slide-container conventional-slide">
+          <div class="section-header">
+            <span class="section-tag">02 · ARQUITECTURA TEÓRICA Y DISEÑO METODOLÓGICO</span>
+            <h2>Tres Lentes Analíticos Integrados para el Estudio de Caso</h2>
+          </div>
+
+          <div class="three-col-grid">
+            <!-- Lente 1 -->
+            <div class="theory-card">
+              <div class="theory-index">01</div>
+              <span class="badge badge-cyan">Escala y Territorio</span>
+              <h3>Gobernanza Territorial Multinivel</h3>
+              <p class="theory-author">Farinós Dasí (2008, 2015)</p>
+              <p class="theory-body">
+                Evalúa la articulación de políticas públicas bajo un enfoque <em>place-based</em> (basado en el lugar) a través de dos ejes:
+              </p>
+              <ul class="clean-list">
+                <li><strong>Integración Vertical:</strong> Coordinación intergubernamental entre Gobierno Nacional (MTC, MVCS, APN), Gobierno Regional, Municipalidad Provincial de Huaral y MDCH.</li>
+                <li><strong>Integración Horizontal:</strong> Concertación intersectorial en el territorio entre actores públicos, operador portuario y sociedad civil.</li>
+              </ul>
+            </div>
+
+            <!-- Lente 2 -->
+            <div class="theory-card">
+              <div class="theory-index">02</div>
+              <span class="badge badge-amber">Agencia Estatal</span>
+              <h3>Capacidades Institucionales TOPP</h3>
+              <p class="theory-author">Salazar-Xirinachs &amp; Boeninger (2025, 2026)</p>
+              <p class="theory-body">
+                Desagrega la capacidad real del gobierno local para conducir la transformación urbana en cuatro dimensiones interdependientes:
+              </p>
+              <ul class="clean-list">
+                <li><strong>Técnicas (T):</strong> Instrumentos de planificación vigentes y catastros.</li>
+                <li><strong>Operativas (O):</strong> Burocracia profesional (CAP), ejecución presupuestal y provisión de servicios.</li>
+                <li><strong>Políticas (P):</strong> Mediación de conflictos y construcción de coaliciones.</li>
+                <li><strong>Prospectivas (P):</strong> Anticipación de escenarios y gestión de suelo futuro.</li>
+              </ul>
+            </div>
+
+            <!-- Lente 3 -->
+            <div class="theory-card">
+              <div class="theory-index">03</div>
+              <span class="badge badge-rose">Decisión y Bloqueo</span>
+              <h3>Teoría de Jugadores con Veto (<em>Veto Players</em>)</h3>
+              <p class="theory-author">Tsebelis (1995, 2002)</p>
+              <p class="theory-body">
+                Explica la estabilidad o bloqueo de políticas urbanas distinguiendo dos categorías de actores:
+              </p>
+              <ul class="clean-list">
+                <li><strong>Veto Institucional Formal:</strong> Actores cuyo acuerdo es legalmente exigible para modificar el <em>statu quo</em> normativo (MTC, MPH, MDCH).</li>
+                <li><strong> Poder de Bloqueo de Facto:</strong> Actores corporativos (CSPCP) o socioterritoriales (frentes vecinales/OSPAs) que alteran o paralizan la implementación provocando la <strong>reducción del «conjunto ganador»</strong>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="methodology-banner">
+            <div class="method-label">DISEÑO METODOLÓGICO</div>
+            <div class="method-content">
+              <strong>Estudio de caso instrumental (2024–2026):</strong> Triangulación cualitativa-cuantitativa mediante <strong>codificación axial del PDU Chancay 2024–2034</strong>, análisis del marco normativo sectorial/municipal (Leyes N.° 27181, 27972 y 31313), ejecución SIAF-MEF y reportes de conflictividad socioambiental (<strong>SPDA</strong> y <strong>Defensoría del Pueblo</strong>).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           BLOQUE 2: RECORRIDO INTERACTIVO 3D EN EL MAPA DE CHANCAY (SLIDES 4-9)
+           =================================================================== -->
+
+      <!-- SLIDE 4: ANCLA 1 - VISTA GENERAL DE CHANCAY -->
+      <section
+        data-map="true"
+        data-anchor="1"
+        data-center="-77.2680,-11.5700"
+        data-zoom="12.8"
+        data-pitch="45"
+        data-bearing="-15"
+        data-speed="0.7"
+        data-curve="1.8">
+        <div class="map-slide-wrapper align-right">
+          <article class="geo-card">
+            <div class="geo-card-header">
+              <span class="badge badge-cyan">ZONA ANCLA 01 / 06 · ESCALA DISTRITAL</span>
+              <span class="geo-coords">11°34'12"S · 77°16'04"W</span>
+            </div>
+
+            <h2>Transición al Territorio: Brechas Estructurales Preexistentes</h2>
+
+            <p class="geo-lead">
+              El megaproyecto portuario se inserta sobre un sistema urbano intermedio menor con severos déficits históricos de infraestructura básica y fragmentación espacial entre el núcleo urbano, el litoral y los asentamientos periféricos.
+            </p>
+
+            <div class="kpi-strip">
+              <div class="kpi-box kpi-amber">
+                <span class="kpi-num">30%</span>
+                <span class="kpi-label">Sin acceso a red pública de <strong>agua potable</strong></span>
+              </div>
+              <div class="kpi-box kpi-rose">
+                <span class="kpi-num">27%</span>
+                <span class="kpi-label">Sin cobertura de red de <strong>alcantarillado</strong></span>
+              </div>
+              <div class="kpi-box kpi-cyan">
+                <span class="kpi-num">65%</span>
+                <span class="kpi-label">De vías urbanas locales <strong>sin pavimentar</strong></span>
+              </div>
+            </div>
+
+            <div class="geo-insight">
+              <strong>Lectura Territorial:</strong> Esta línea de base deficitaria condiciona la capacidad de absorción del distrito ante el flujo migratorio y logístico proyectado hacia 2034.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: ANCLA 2 - TERMINAL PORTUARIO MULTIPROPÓSITO / PUNTA CHANCAY -->
+      <section
+        data-map="true"
+        data-anchor="2"
+        data-center="-77.2785,-11.5835"
+        data-zoom="15.6"
+        data-pitch="65"
+        data-bearing="40"
+        data-speed="0.7"
+        data-curve="1.8">
+        <div class="map-slide-wrapper align-right">
+          <article class="geo-card">
+            <div class="geo-card-header">
+              <span class="badge badge-amber">ZONA ANCLA 02 / 06 · PUNTA CHANCAY</span>
+              <span class="geo-coords">11°35'00"S · 77°16'42"W</span>
+            </div>
+
+            <h2>Terminal Portuario Multipropósito: Poder de Bloqueo de Facto Corporativo</h2>
+
+            <div class="actor-banner">
+              <span class="actor-role">ACTOR ECONÓMICO-CORPORATIVO</span>
+              <strong>Consorcio Cosco Shipping Ports Chancay Perú (CSPCP)</strong>
+            </div>
+
+            <ul class="geo-list">
+              <li>
+                <strong>Magnitud del Capital:</strong> Titular de una inversión superior a <strong>US$ 1,300 millones</strong> en el complejo operativo de Punta Chancay (muelles de espigón, rompeolas y zona operativa portuaria).
+              </li>
+              <li>
+                <strong>Impulso Sectorial Nacional (MTC / APN):</strong> Priorización estratégica desde el Ejecutivo orientada a la competitividad y conectividad <em>macro-regional transpacífica</em>.
+              </li>
+              <li>
+                <strong>Tensión de Integración Local:</strong> El ritmo y diseño de los componentes de ingeniería portuaria se definen en esferas sectoriales nacionales, generando asimetrías de información y rezago en la adecuación urbana local.
+              </li>
+            </ul>
+
+            <div class="geo-insight insight-amber">
+              <strong>Efecto Institucional:</strong> Configura un actor con <em>poder de bloqueo de facto</em> por su gravitación económica y control técnico sobre el diseño del nodo logístico.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: ANCLA 3 - SECTOR PERALVILLO Y BAHÍA EL CASCAJO -->
+      <section
+        data-map="true"
+        data-anchor="3"
+        data-center="-77.2710,-11.5880"
+        data-zoom="16.0"
+        data-pitch="60"
+        data-bearing="80"
+        data-speed="0.7"
+        data-curve="1.8">
+        <div class="map-slide-wrapper align-right">
+          <article class="geo-card">
+            <div class="geo-card-header">
+              <span class="badge badge-rose">ZONA ANCLA 03 / 06 · PERALVILLO Y EL CASCAJO</span>
+              <span class="geo-coords">11°35'16"S · 77°16'15"W</span>
+            </div>
+
+            <h2>Desarticulación Horizontal e Impactos Socioambientales</h2>
+
+            <p class="geo-lead">
+              Evidencia empírica de la fragmentación entre la evaluación ambiental sectorial y la gestión local del riesgo de desastres y saneamiento costero:
+            </p>
+
+            <div class="dual-incident-box">
+              <div class="incident-item incident-rose">
+                <span class="incident-tag">SECTOR PERALVILLO · MAYO 2023</span>
+                <h4>Subsidencia y Hundimiento en Túnel Viaducto</h4>
+                <p>
+                  El uso sucesivo de <strong>Informes Técnicos Sustentatorios (ITS)</strong> para modificaciones de obra careció de articulación preventiva con el control urbano y gestión de riesgo municipal, desencadenando el hundimiento de viviendas y la paralización temporal del túnel subterráneo.
+                </p>
+              </div>
+
+              <div class="incident-item incident-amber">
+                <span class="incident-tag">BAHÍA DE CHANCAY / HUMEDAL EL CASCAJO</span>
+                <h4>Ausencia de PTAR y Presión Ecosistémica</h4>
+                <p>
+                  Inexistencia histórica de Planta de Tratamiento de Aguas Residuales (PTAR) y reportes del <strong>OEFA</strong> sobre contaminación microbiológica por vertimientos domésticos e industriales sobre el litoral adyacente al humedal.
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: ANCLA 4 - TRAZADO DE LA VÍA DE EVITAMIENTO: MTC VS PDU -->
+      <section
+        data-map="true"
+        data-anchor="4"
+        data-geojson="vias"
+        data-center="-77.2620,-11.5480"
+        data-zoom="12.45"
+        data-pitch="52"
+        data-bearing="12"
+        data-speed="0.7"
+        data-curve="1.8">
+        <div class="map-slide-wrapper align-right">
+          <article class="geo-card">
+            <div class="geo-card-header">
+              <span class="badge badge-amber">ZONA ANCLA 04 / 06 · CONFLICTO INTERGUBERNAMENTAL</span>
+              <span class="geo-coords">MAPA 3.5-7 PDU CHANCAY</span>
+            </div>
+
+            <h2>Fricción Vertical y Bloqueo Técnico-Participativo: Vía de Evitamiento</h2>
+
+            <!-- Leyenda GeoJSON en tarjeta -->
+            <div class="map-legend-box">
+              <div class="legend-row">
+                <span class="legend-line line-mtc"></span>
+                <div>
+                  <strong>Propuesta MTC (Trazo Costero Rechazado):</strong> Corta hacia el litoral por <em>La Calichera</em> y <em>Playa Acapulco</em> hasta Chancayllo, fracturando la expansión urbana y la Alameda Costera.
+                </div>
+              </div>
+              <div class="legend-row">
+                <span class="legend-line line-pdu"></span>
+                <div>
+                  <strong>Propuesta PDU Chancay (Trazo Este):</strong> Arco vial periférico por el Este (<em>Quepepampa – Cerro La Culebra – Pampa Libre – San Cayetano</em>).
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-stat-row">
+              <div class="big-badge-number">3,657</div>
+              <div class="big-badge-text">
+                <strong>Ciudadanos y entidades locales</strong> rechazaron formalmente el trazo costero del MTC en talleres y consulta pública, logrando excluirlo del PDU (<em>MVCS &amp; MDCH, 2024, p. 43</em>).
+              </div>
+            </div>
+
+            <div class="geo-insight">
+              <strong>Choque de Competencias Normativas:</strong> Colisión entre la competencia exclusiva del MTC sobre la Red Vial Nacional (<strong>Ley N.° 27181</strong>) y la autonomía municipal en zonificación y ordenamiento urbano (<strong>Ley N.° 27972</strong>, <strong>Ley DUS N.° 31313</strong> y <strong>D.S. N.° 012-2022-VIVIENDA</strong>).
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: ANCLA 5 - MUNICIPALIDAD DISTRITAL DE CHANCAY - PLAZA DE ARMAS -->
+      <section
+        data-map="true"
+        data-anchor="5"
+        data-center="-77.2669,-11.5633"
+        data-zoom="16.8"
+        data-pitch="65"
+        data-bearing="-20"
+        data-speed="0.7"
+        data-curve="1.8">
+        <div class="map-slide-wrapper align-right">
+          <article class="geo-card">
+            <div class="geo-card-header">
+              <span class="badge badge-cyan">ZONA ANCLA 05 / 06 · PLAZA DE ARMAS (MDCH)</span>
+              <span class="geo-coords">11°33'47"S · 77°16'00"W</span>
+            </div>
+
+            <h2>Diagnóstico de Capacidades TOPP y Veto Institucional</h2>
+
+            <div class="topp-grid">
+              <div class="topp-cell">
+                <span class="topp-badge">T · TÉCNICA</span>
+                <p><strong>PDC vencido (2011–2021)</strong> durante la fase crítica de aprobación portuaria; alta dependencia técnica y financiera del <strong>MVCS</strong> para formular el PDU 2024–2034.</p>
+              </div>
+
+              <div class="topp-cell topp-cell-highlight">
+                <span class="topp-badge badge-amber">O · OPERATIVA</span>
+                <p>Solo <strong>21 plazas orgánicas en el CAP</strong> municipal. PIM 2024 de <strong>S/ 40.9M</strong> con <strong>64.5% en gasto corriente</strong>, <strong>73.6% de dependencia</strong> de transferencias nacionales y apenas <strong>7.1% de ejecución</strong> en inversiones al 1er trimestre 2024.</p>
+              </div>
+
+              <div class="topp-cell">
+                <span class="topp-badge">P · POLÍTICA</span>
+                <p>Capacidad predominantemente <strong>reactiva/defensiva</strong>, articulando una coalición local con sociedad civil en el PDU para resistir trazos viales impuestos desde el nivel central.</p>
+              </div>
+
+              <div class="topp-cell">
+                <span class="topp-badge">P · PROSPECTIVA</span>
+                <p><strong>Inexistente institucionalmente:</strong> Sin oficina de planeamiento estratégico/prospectivo ni banco municipal de tierras o instrumentos activos de gestión de suelo.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: ANCLA 6 - A.H. CERRO LA CULEBRA Y PERIFERIA ESTE -->
+      <section
+        data-map="true"
+        data-anchor="6"
+        data-center="-77.2550,-11.5580"
+        data-zoom="15.8"
+        data-pitch="60"
+        data-bearing="110"
+        data-speed="0.7"
+        data-curve="1.8">
+        <div class="map-slide-wrapper align-right">
+          <article class="geo-card">
+            <div class="geo-card-header">
+              <span class="badge badge-rose">ZONA ANCLA 06 / 06 · A.H. CERRO LA CULEBRA</span>
+              <span class="geo-coords">11°33'28"S · 77°15'18"W</span>
+            </div>
+
+            <h2>Bloqueo de Facto Socioterritorial y Conflictividad en la Periferia Este</h2>
+
+            <div class="actor-banner banner-rose">
+              <span class="actor-role">ACTORES SOCIOTERRITORIALES</span>
+              <strong>Frentes de Defensa, Asentamientos Humanos y OSPAs</strong>
+            </div>
+
+            <ul class="geo-list">
+              <li>
+                <strong>Caso A.H. Cerro La Culebra:</strong> Movilizaciones ciudadanas registradas en el <strong>Reporte de Conflictos Sociales N.° 269 de la Defensoría del Pueblo (julio 2026)</strong> ante la paralización de obras de agua y saneamiento desde el año 2022 (bajo ámbito de <strong>EMAPA Chancay / MVCS</strong>).
+              </li>
+              <li>
+                <strong>Organizaciones Sociales de Pescadores Artesanales (OSPAs) y Frentes Vecinales:</strong> Cuestionamiento a la afectación de caletas, áreas de pesca e impactos constructivos no compensados.
+              </li>
+              <li>
+                <strong>Presión Demográfica Inducida:</strong> La valorización especulativa del suelo y el arribo de nueva población agravan el déficit histórico en las laderas periféricas del Este.
+              </li>
+            </ul>
+
+            <div class="geo-insight insight-rose">
+              <strong>Mecanismo de Bloqueo:</strong> Retiro de licencia social, protesta contenciosa e impugnación administrativa frente a la brecha entre prosperidad portuaria y precariedad barrial.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           BLOQUE 3: SLIDES CONVENCIONALES (ANÁLISIS INSTITUCIONAL, CONCLUSIONES Y PROPUESTAS)
+           =================================================================== -->
+
+      <!-- SLIDE 10: DINÁMICA DE JUGADORES CON VETO (TSEBELIS) -->
+      <section
+        data-map="false"
+        data-center="-77.2680,-11.5700"
+        data-zoom="13.2"
+        data-pitch="45"
+        data-bearing="0"
+        data-speed="0.6"
+        data-curve="1.6">
+        <div class="slide-container conventional-slide">
+          <div class="section-header">
+            <span class="section-tag">03 · ANÁLISIS INSTITUCIONAL (TSEBELIS, 1995, 2002)</span>
+            <h2>Dinámica de Jugadores con Veto y Contracción del «Conjunto Ganador»</h2>
+            <p class="section-lead">
+              La divergencia de preferencias entre actores con poder de veto formal y actores con capacidad de bloqueo fáctico reduce el espacio de acuerdos viables, generando un <strong>impase regulatorio y territorial</strong>.
+            </p>
+          </div>
+
+          <div class="veto-matrix">
+            <!-- Columna 1: Veto Institucional Formal -->
+            <div class="veto-column veto-formal">
+              <div class="veto-col-header">
+                <span class="badge badge-cyan">JUGADORES INSTITUCIONALES</span>
+                <h3>Veto Institucional Formal (<em>De Jure</em>)</h3>
+                <p>Prerrogativas constitucionales y legales requeridas para aprobar o modificar planes y trazos viales.</p>
+              </div>
+
+              <div class="veto-items">
+                <div class="veto-row">
+                  <div class="veto-actor">MDCH (Gobierno Distrital)</div>
+                  <div class="veto-power">Formula el PDU Chancay 2024–2034, conduce la consulta vecinal y administra licencias de edificación/habilitación urbana.</div>
+                </div>
+                <div class="veto-row">
+                  <div class="veto-actor">Municipalidad Provincial de Huaral (MPH)</div>
+                  <div class="veto-power">Titular del <strong>veto aprobatorio definitivo</strong> mediante Ordenanza Provincial (Ley N.° 27972 y Ley N.° 31313).</div>
+                </div>
+                <div class="veto-row">
+                  <div class="veto-actor">MVCS (Vivienda y Urbanismo)</div>
+                  <div class="veto-power">Rectoría técnica nacional, asistencia financiera del PDU y ejecución de megaproyectos de saneamiento (PNSU).</div>
+                </div>
+                <div class="veto-row">
+                  <div class="veto-actor">MTC / APN (Transportes y Puertos)</div>
+                  <div class="veto-power">Competencia exclusiva y excluyente sobre el diseño, derecho de vía y concesiones de la Red Vial Nacional y sistema portuario.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna 2: Bloqueo de Facto Informal -->
+            <div class="veto-column veto-facto">
+              <div class="veto-col-header">
+                <span class="badge badge-amber">ACTORES NO ESTATALES / TERRITORIALES</span>
+                <h3>Poder de Bloqueo de Facto (<em>De Facto</em>)</h3>
+                <p>Capacidad fáctica de condicionar inversiones, modificar cronogramas o inviabilizar decisiones en terreno.</p>
+              </div>
+
+              <div class="veto-items">
+                <div class="veto-row">
+                  <div class="veto-actor text-amber">Consorcio CSPCP (Operador Portuario)</div>
+                  <div class="veto-power">
+                    Control de la inversión (&gt;US$ 1,300M), manejo técnico de modificaciones vía <strong>IGA / ITS</strong> ante SENACE/MTC y capacidad de negociación directa con el Poder Ejecutivo.
+                  </div>
+                </div>
+                <div class="veto-row">
+                  <div class="veto-actor text-rose">Frentes Vecinales, A.H. y OSPAs</div>
+                  <div class="veto-power">
+                    Control de la <strong>licencia social</strong>, movilización contenciosa (Cerro La Culebra, Peralvillo) e <strong>impugnación administrativa/participativa</strong> (3,657 oposiciones al trazo vial costero).
+                  </div>
+                </div>
+              </div>
+
+              <div class="winset-synthesis">
+                <div class="winset-title">EFECTO SISTÉMICO: REDUCCIÓN DEL «CONJUNTO GANADOR»</div>
+                <p>
+                  Cuando el MTC diseña sin el municipio y el municipio planifica un PDU que el MTC no reconoce vinculante para su red nacional, el <em>conjunto ganador</em> colapsa en un <strong>equilibrio subóptimo de obras paralizadas y conflictos latentes</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 11: CONCLUSIONES EMPÍRICAS Y TEÓRICAS -->
+      <section
+        data-map="false"
+        data-center="-77.2740,-11.5760"
+        data-zoom="13.0"
+        data-pitch="50"
+        data-bearing="15"
+        data-speed="0.6"
+        data-curve="1.6">
+        <div class="slide-container conventional-slide">
+          <div class="section-header">
+            <span class="section-tag">04 · HALLAZGOS DEL ESTUDIO DE CASO</span>
+            <h2>Conclusiones Empíricas y Teóricas sobre la Integración Puerto-Ciudad</h2>
+          </div>
+
+          <div class="three-col-grid conclusions-grid">
+            <div class="conclusion-card">
+              <div class="conclusion-icon">01</div>
+              <h3>Condicionante Físico-Espacial</h3>
+              <p>
+                La desconexión entre la ingeniería de accesos logísticos (túnel viaducto y trazo costero del MTC) y la trama urbana consolidada amenaza con consolidar una <strong>fractura morfológica litoral</strong> y un corredor de paso que segrega barrios como Peralvillo.
+              </p>
+            </div>
+
+            <div class="conclusion-card">
+              <div class="conclusion-icon">02</div>
+              <h3>Condicionante Dotacional y Social</h3>
+              <p>
+                El shock demográfico proyectado (<strong>216,033 hab. al 2034</strong> y <strong>58,162 nuevas viviendas</strong>) colisiona con una ciudad donde el 30% carece de agua, no existe PTAR operativa y los proyectos de saneamiento en periferias (Cerro La Culebra) sufren paralizaciones desde 2022.
+              </p>
+            </div>
+
+            <div class="conclusion-card">
+              <div class="conclusion-icon">03</div>
+              <h3>Condicionante Regulatorio e Institucional</h3>
+              <p>
+                La superposición de competencias entre el régimen sectorial de infraestructura nacional (Ley N.° 27181) y el régimen de desarrollo urbano municipal (Leyes N.° 27972 y 31313) produce una <strong>planificación dual sin mecanismos vinculantes de armonización</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="theoretical-takeaway">
+            <div class="takeaway-badge">TESIS CENTRAL</div>
+            <p>
+              La combinación de un <strong>diseño sectorial <em>top-down</em></strong> desde el Gobierno Central con una <strong>aguda debilidad burocrática local</strong> (expresada en apenas <strong>21 plazas orgánicas en el CAP</strong> y 7.1% de ejecución trimestral de inversión) bloquea la emergencia de una gobernanza endógena y configura estructuralmente el <strong>riesgo de un enclave logístico</strong> en Chancay.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 12: LINEAMIENTOS PROPOSITIVOS DE GOBERNANZA ENDÓGENA -->
+      <section
+        data-map="false"
+        data-center="-77.2680,-11.5700"
+        data-zoom="12.6"
+        data-pitch="40"
+        data-bearing="-15"
+        data-speed="0.6"
+        data-curve="1.6">
+        <div class="slide-container conventional-slide">
+          <div class="section-header">
+            <span class="section-tag">05 · AGENDA DE POLÍTICA PÚBLICA (2026–2034)</span>
+            <h2>Lineamientos Propositivos para una Gobernanza Endógena y Territorial</h2>
+            <p class="section-lead">
+              Superar la trampa de gobernanza exige expandir el «conjunto ganador» mediante reformas institucionales en tres dimensiones simultáneas:
+            </p>
+          </div>
+
+          <div class="three-col-grid proposals-grid">
+            <!-- Columna 1 -->
+            <div class="proposal-col col-cyan">
+              <div class="proposal-header">
+                <span class="proposal-step">DIMENSIÓN 01</span>
+                <h3>Política y Multinivel</h3>
+              </div>
+              <div class="proposal-body">
+                <h4>Mesa Ejecutiva o Consejo de Coordinación Territorial Puerto-Ciudad</h4>
+                <p>
+                  Institucionalizar una instancia multisectorial e intergubernamental vinculante (bajo el <strong>modelo de Mesas Ejecutivas MEF / PCM</strong>) que integre a:
+                </p>
+                <div class="actor-tags">
+                  <span>MTC</span><span>MVCS</span><span>MINAM</span><span>GORE Lima</span><span>MPH Huaral</span><span>MDCH</span><span>CSPCP</span><span>Sociedad Civil</span>
+                </div>
+                <p class="proposal-impact">
+                  <strong>Objetivo:</strong> Alinear de forma vinculante los expedientes definitivos de la Vía de Evitamiento y accesos ferroviarios/viales con la zonificación del <strong>PDU Chancay 2024–2034</strong>.
+                </p>
+              </div>
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="proposal-col col-amber">
+              <div class="proposal-header">
+                <span class="proposal-step">DIMENSIÓN 02</span>
+                <h3>Operativa y Fiscal</h3>
+              </div>
+              <div class="proposal-body">
+                <h4>Fideicomiso Territorial y Cierre de Brechas</h4>
+                <ul class="clean-list">
+                  <li>
+                    <strong>Fideicomiso de Infraestructura Territorial:</strong> Alimentado por un porcentaje del incremento de la recaudación aduanera y tributaria generada por el nodo portuario.
+                  </li>
+                  <li>
+                    <strong>Obras por Impuestos (OxI):</strong> Priorización inmediata de la <strong>PTAR Chancay</strong>, destrabe del saneamiento en Cerro La Culebra y pavimentación de vías integradoras.
+                  </li>
+                  <li>
+                    <strong>Reingeniería de EMAPA Chancay:</strong> Fortalecimiento técnico, gerencial y financiero de la EPS municipal.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Columna 3 -->
+            <div class="proposal-col col-emerald">
+              <div class="proposal-header">
+                <span class="proposal-step">DIMENSIÓN 03</span>
+                <h3>Técnica y Prospectiva</h3>
+              </div>
+              <div class="proposal-body">
+                <h4>Gestión del Suelo y Burocracia Local</h4>
+                <ul class="clean-list">
+                  <li>
+                    <strong>Reforma del ROF y CAP Municipal:</strong> Creación de la <em>Unidad Técnica de Planeamiento Prospectivo y Gestión del Suelo</em>, ampliando plazas meritocráticas (SERVIR).
+                  </li>
+                  <li>
+                    <strong>Instrumentos de la Ley DUS (Ley N.° 31313):</strong> Implementación efectiva de mecanismos de <strong>captura de plusvalías urbanas</strong> (participación en el incremento del valor del suelo), cargas urbanísticas y reservas de suelo para vivienda de interés social.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js v5.x Script -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <!-- Mapbox GL JS v3.x Script -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+  <!-- Custom Logic -->
+  <script src="js/app.js?v=5"></script>
+</body>
+</html>
