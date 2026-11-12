@@ -12,14 +12,15 @@ if (typeof mapboxgl !== 'undefined') {
   mapboxgl.accessToken = MAPBOX_TOKEN;
 }
 
-// 2. MAPA DE VIDEOCLIPS PARA MODO OFFLINE (SLIDES 4 A 9)
+// 2. MAPA DE VIDEOCLIPS PARA MODO OFFLINE (SLIDES 4 A 9 Y SLIDE 13)
 const OFFLINE_VIDEO_MAP = {
   3: 'assets/videos/slide4_distrital.webm',   // Slide 4 (0-based index: 3)
   4: 'assets/videos/slide5_puerto.webm',      // Slide 5 (0-based index: 4)
   5: 'assets/videos/slide6_peralvillo.webm',  // Slide 6 (0-based index: 5)
   6: 'assets/videos/slide7_evitamiento.webm', // Slide 7 (0-based index: 6)
   7: 'assets/videos/slide8_muni.webm',        // Slide 8 (0-based index: 7)
-  8: 'assets/videos/slide9_culebra.webm'      // Slide 9 (0-based index: 8)
+  8: 'assets/videos/slide9_culebra.webm',     // Slide 9 (0-based index: 8)
+  12: 'assets/videos/slide13_nacional.webm'   // Slide 13 (0-based index: 12)
 };
 
 // Cache en memoria/Blob por si se graban en caliente con MediaRecorder
@@ -86,6 +87,104 @@ const ANCHOR_POINTS = [
     coords: [-77.2550, -11.5580],
     colorClass: 'marker-rose',
     hexColor: '#e11d48'
+  }
+];
+
+// 3.b DEFINICIÓN DE LOS 10 NODOS ESTRATÉGICOS A ESCALA NACIONAL (SLIDE 13 - EPÍLOGO)
+const NATIONAL_NODES = [
+  // Eje Litoral / Portuario (Color Cian/Azul)
+  {
+    id: 'talara',
+    title: 'Talara (Piura)',
+    desc: 'Puerto Aeroespacial',
+    coords: [-81.2719, -4.5772],
+    category: 'litoral',
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
+  },
+  {
+    id: 'paita',
+    title: 'Paita (Piura)',
+    desc: 'Ampliación Portuaria y ZEE',
+    coords: [-81.1144, -5.0892],
+    category: 'litoral',
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
+  },
+  {
+    id: 'chancay',
+    title: 'Chancay (Lima)',
+    desc: 'Caso Testigo · Escala Máxima',
+    coords: [-77.2785, -11.5835],
+    category: 'litoral',
+    colorClass: 'marker-cyan marker-highlight-hero',
+    hexColor: '#0284c7',
+    isHero: true
+  },
+  {
+    id: 'ancon',
+    title: 'Ancón (Lima)',
+    desc: 'Ciudad Bicentenario / Parque Industrial',
+    coords: [-77.1736, -11.7764],
+    category: 'litoral',
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
+  },
+  {
+    id: 'marcona',
+    title: 'Marcona (Ica)',
+    desc: 'Terminal Portuario',
+    coords: [-75.1619, -15.3622],
+    category: 'litoral',
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
+  },
+  {
+    id: 'corio',
+    title: 'Islay - Corio (Arequipa)',
+    desc: 'Proyecto Megapuerto de Corio',
+    coords: [-71.7925, -17.1700],
+    category: 'litoral',
+    colorClass: 'marker-cyan',
+    hexColor: '#0284c7'
+  },
+
+  // Eje Interior / Extractivo-Multimodal (Color Ámbar/Naranja)
+  {
+    id: 'chinchero',
+    title: 'Chinchero (Cusco)',
+    desc: 'Aeropuerto Internacional (AICC)',
+    coords: [-72.0469, -13.3931],
+    category: 'interior',
+    colorClass: 'marker-amber',
+    hexColor: '#d97706'
+  },
+  {
+    id: 'challhuahuacho',
+    title: 'Challhuahuacho (Apurímac)',
+    desc: 'Corredor Minero del Sur',
+    coords: [-72.2483, -14.1228],
+    category: 'interior',
+    colorClass: 'marker-amber',
+    hexColor: '#d97706'
+  },
+  {
+    id: 'yurimaguas',
+    title: 'Yurimaguas (Loreto)',
+    desc: 'Terminal Portuario Fluvial (IIRSA Norte)',
+    coords: [-76.1036, -5.8969],
+    category: 'interior',
+    colorClass: 'marker-amber',
+    hexColor: '#d97706'
+  },
+  {
+    id: 'puerto_maldonado',
+    title: 'Puerto Maldonado (Madre de Dios)',
+    desc: 'Corredor Interoceánico (IIRSA Sur)',
+    coords: [-69.1892, -12.5933],
+    category: 'interior',
+    colorClass: 'marker-amber',
+    hexColor: '#d97706'
   }
 ];
 
@@ -244,6 +343,7 @@ let isFreeMapMode = false;
 let currentVideoSrc = '';
 let videoFadeTimer = null;
 const markerElements = {};
+const nationalMarkerElements = [];
 
 // 6. INICIALIZACIÓN CONDICIONAL DE MAPBOX GL JS (OMITIDA SI INICIA EN MODO OFFLINE)
 function initMapboxInstance() {
@@ -500,6 +600,36 @@ function initMapboxInstance() {
         .addTo(map);
 
       markerElements[anchor.id] = el;
+    });
+
+    // Marcadores a Escala Nacional para Slide 13 (Epílogo)
+    NATIONAL_NODES.forEach((node) => {
+      const el = document.createElement('div');
+      el.className = `national-marker ${node.colorClass} ${node.isHero ? 'is-hero' : ''}`;
+      el.style.display = 'none'; // ocultos por defecto en slides 1 a 12
+      el.innerHTML = `
+        <div class="nat-pin-wrap">
+          <div class="nat-pulse"></div>
+          <div class="nat-core"></div>
+        </div>
+        <div class="nat-label-card">
+          <span class="nat-title">${node.title}</span>
+          <span class="nat-desc">${node.desc}</span>
+        </div>
+      `;
+
+      if (node.isHero) {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          Reveal.slide(4); // Permite hacer click para volver al detalle de Chancay
+        });
+      }
+
+      new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat(node.coords)
+        .addTo(map);
+
+      nationalMarkerElements.push(el);
     });
 
     mapReady = true;
@@ -764,10 +894,11 @@ function syncSlideWithMap(slideElement, slideIndex) {
   if (!slideElement) return;
 
   const isMapSlide = slideElement.getAttribute('data-map') === 'true';
+  const isNationalSlide = slideElement.getAttribute('data-slide-type') === 'national' || slideIndex === 12;
   const anchorId = parseInt(slideElement.getAttribute('data-anchor') || '0', 10);
   const backdrop = document.getElementById('map-backdrop');
 
-  // Actualizar contador de diapositivas (01 / 12)
+  // Actualizar contador de diapositivas (01 / 13)
   const totalSlides = Reveal.getTotalSlides();
   const counterEl = document.getElementById('slide-counter');
   if (counterEl) {
@@ -777,6 +908,8 @@ function syncSlideWithMap(slideElement, slideIndex) {
   }
 
   // Alternar modo visual del body y la capa de desenfoque
+  document.body.classList.toggle('mode-slide-national', isNationalSlide);
+
   if (isMapSlide) {
     document.body.classList.remove('mode-conventional');
     document.body.classList.add('mode-map');
@@ -804,13 +937,44 @@ function syncSlideWithMap(slideElement, slideIndex) {
   const player = document.getElementById('fallback-player');
   if (player && !player.paused) player.pause();
 
-  // Resaltar marcador activo en el mapa 3D
-  Object.keys(markerElements).forEach((id) => {
-    const el = markerElements[id];
-    if (el) {
-      el.classList.toggle('active-anchor', parseInt(id, 10) === anchorId);
+  // Gestión de marcadores locales vs. nacionales y optimización de terreno
+  if (isNationalSlide) {
+    // 1. Ocultar marcadores locales de Chancay
+    Object.keys(markerElements).forEach((id) => {
+      const el = markerElements[id];
+      if (el) el.style.display = 'none';
+    });
+
+    // 2. Mostrar marcadores nacionales con suave escalonamiento fade-in
+    nationalMarkerElements.forEach((el, idx) => {
+      el.style.display = 'flex';
+      el.style.animationDelay = `${idx * 60}ms`;
+    });
+
+    // 3. Optimización: reducir exageración de terreno a 1.0 en vista macro nacional
+    if (map && map.setTerrain) {
+      map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.0 });
     }
-  });
+  } else {
+    // 1. Ocultar marcadores nacionales
+    nationalMarkerElements.forEach((el) => {
+      el.style.display = 'none';
+    });
+
+    // 2. Restaurar marcadores locales si estamos en slide de mapa local
+    Object.keys(markerElements).forEach((id) => {
+      const el = markerElements[id];
+      if (el) {
+        el.style.display = isMapSlide ? 'flex' : 'none';
+        el.classList.toggle('active-anchor', parseInt(id, 10) === anchorId);
+      }
+    });
+
+    // 3. Restaurar exageración natural de relieve (1.4) para Chancay
+    if (map && map.setTerrain) {
+      map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.4 });
+    }
+  }
 
   // Ejecutar transición de cámara en Mapbox 3D
   const centerAttr = slideElement.getAttribute('data-center');
@@ -822,28 +986,44 @@ function syncSlideWithMap(slideElement, slideIndex) {
     const duration = parseFloat(slideElement.getAttribute('data-duration') || '3400');
     const curve = parseFloat(slideElement.getAttribute('data-curve') || '1.25');
 
-    const targetCenter = isMapSlide
-      ? getSplitScreenCenter(rawCoords, zoomLevel, bearingLevel)
-      : rawCoords;
-
     if (isMapSlide) {
-      map.flyTo({
-        center: targetCenter,
-        zoom: zoomLevel,
-        pitch: pitchLevel,
-        bearing: bearingLevel,
-        duration: duration,
-        curve: curve,
-        easing: cinematicEasing,
-        essential: true
-      });
+      if (isNationalSlide) {
+        // Enfoque Macro Nacional con padding derecho para tarjeta split
+        const rightPad = is1280Mode ? 490 : Math.min(window.innerWidth * 0.38, 520);
+        map.flyTo({
+          center: rawCoords,
+          zoom: zoomLevel,
+          pitch: pitchLevel,
+          bearing: bearingLevel,
+          duration: duration,
+          curve: curve,
+          speed: parseFloat(slideElement.getAttribute('data-speed') || '0.6'),
+          padding: { top: 0, bottom: 0, left: 0, right: rightPad },
+          easing: cinematicEasing,
+          essential: true
+        });
+      } else {
+        const targetCenter = getSplitScreenCenter(rawCoords, zoomLevel, bearingLevel);
+        map.flyTo({
+          center: targetCenter,
+          zoom: zoomLevel,
+          pitch: pitchLevel,
+          bearing: bearingLevel,
+          duration: duration,
+          curve: curve,
+          padding: { top: 0, bottom: 0, left: 0, right: 0 },
+          easing: cinematicEasing,
+          essential: true
+        });
+      }
     } else {
       map.easeTo({
-        center: targetCenter,
+        center: rawCoords,
         zoom: zoomLevel,
         pitch: pitchLevel,
         bearing: bearingLevel,
         duration: 2400,
+        padding: { top: 0, bottom: 0, left: 0, right: 0 },
         easing: cinematicEasing,
         essential: true
       });
