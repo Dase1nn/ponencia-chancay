@@ -512,6 +512,7 @@ function initMapboxInstance() {
       id: 'vias-mtc-glow',
       type: 'line',
       source: 'vias-mtc-source',
+      minzoom: 10,
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': '#ef4444', 'line-width': 12, 'line-opacity': 0.32, 'line-blur': 4 }
     });
@@ -520,6 +521,7 @@ function initMapboxInstance() {
       id: 'vias-mtc-line',
       type: 'line',
       source: 'vias-mtc-source',
+      minzoom: 10,
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': '#ef4444', 'line-width': 4.5, 'line-dasharray': [2, 1.4], 'line-opacity': 0.98 }
     });
@@ -528,6 +530,7 @@ function initMapboxInstance() {
       id: 'vias-pdu-glow',
       type: 'line',
       source: 'vias-pdu-source',
+      minzoom: 10,
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': '#0284c7', 'line-width': 12, 'line-opacity': 0.35, 'line-blur': 4 }
     });
@@ -536,6 +539,7 @@ function initMapboxInstance() {
       id: 'vias-pdu-line',
       type: 'line',
       source: 'vias-pdu-source',
+      minzoom: 10,
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': '#22d3ee', 'line-width': 5, 'line-opacity': 0.98 }
     });
@@ -544,6 +548,7 @@ function initMapboxInstance() {
       id: 'pdu-landmarks-circles',
       type: 'circle',
       source: 'pdu-landmarks-source',
+      minzoom: 10,
       paint: {
         'circle-radius': 5.5,
         'circle-color': ['match', ['get', 'category'], 'mtc', '#ef4444', 'pdu', '#22d3ee', '#f59e0b'],
@@ -556,6 +561,7 @@ function initMapboxInstance() {
       id: 'pdu-landmarks-labels',
       type: 'symbol',
       source: 'pdu-landmarks-source',
+      minzoom: 10,
       layout: {
         'text-field': ['get', 'label'],
         'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
@@ -574,6 +580,7 @@ function initMapboxInstance() {
       id: 'port-corridor-line',
       type: 'line',
       source: 'port-corridor-source',
+      minzoom: 10,
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': '#f59e0b', 'line-width': 4, 'line-dasharray': [1.2, 1.2], 'line-opacity': 0.95 }
     });
@@ -988,17 +995,16 @@ function syncSlideWithMap(slideElement, slideIndex) {
 
     if (isMapSlide) {
       if (isNationalSlide) {
-        // Enfoque Macro Nacional con padding derecho para tarjeta split
-        const rightPad = is1280Mode ? 490 : Math.min(window.innerWidth * 0.38, 520);
+        // Enfoque Macro Nacional: plano cenital ortogonal (90 grados, pitch: 0) centrado a la izquierda
         map.flyTo({
           center: rawCoords,
-          zoom: zoomLevel,
-          pitch: pitchLevel,
-          bearing: bearingLevel,
+          zoom: is1280Mode ? 4.80 : 4.85,
+          pitch: 0,
+          bearing: 0,
           duration: duration,
           curve: curve,
           speed: parseFloat(slideElement.getAttribute('data-speed') || '0.6'),
-          padding: { top: 0, bottom: 0, left: 0, right: rightPad },
+          padding: { top: 0, bottom: 0, left: 0, right: 0 },
           easing: cinematicEasing,
           essential: true
         });
