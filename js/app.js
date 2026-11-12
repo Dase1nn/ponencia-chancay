@@ -227,6 +227,17 @@ const GEOJSON_PORT_CORRIDOR = {
 
 // 5. ESTADO DE CONEXIÓN (ONLINE / OFFLINE) Y VARIABLES DE INSTANCIA
 let isOfflineMode = !navigator.onLine;
+
+// Estado de Resolución: Modo Proyector 1280x1024 (Relación 5:4 SXGA para Auditorios)
+const urlParams = new URLSearchParams(window.location.search);
+let is1280Mode = (
+  urlParams.get('res') === '1280' ||
+  urlParams.get('projector') === 'true' ||
+  urlParams.get('mode') === '1280' ||
+  localStorage.getItem('chancay_mode_1280x1024') === 'true' ||
+  ((window.innerWidth <= 1300 && window.innerHeight >= 900) && localStorage.getItem('chancay_mode_1280x1024') !== 'false')
+);
+
 let map = null;
 let mapReady = false;
 let isFreeMapMode = false;
@@ -302,23 +313,48 @@ function initMapboxInstance() {
       );
     }
 
-    // Terreno 3D
+    // 1. Separar las fuentes raster-dem (terreno 3D y sombreado independientes para evitar agujas/púas)
     if (!map.getSource('mapbox-dem')) {
       map.addSource('mapbox-dem', {
         type: 'raster-dem',
-        tiles: [
-          'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
-        ],
-        encoding: 'terrarium',
-        tileSize: 256,
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
         maxzoom: 14
       });
     }
 
+    if (!map.getSource('mapbox-hillshade-source')) {
+      map.addSource('mapbox-hillshade-source', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
+        maxzoom: 14
+      });
+    }
+
+    // 2. Reducir la exageración del terreno a un valor natural (1.4)
     map.setTerrain({
       source: 'mapbox-dem',
-      exaggeration: 1.85
+      exaggeration: 1.4
     });
+
+    // 3. Reconectar la capa hillshade a su propia fuente con exageración moderada (0.4)
+    if (!map.getLayer('mapbox-hillshade-layer')) {
+      map.addLayer(
+        {
+          id: 'mapbox-hillshade-layer',
+          type: 'hillshade',
+          source: 'mapbox-hillshade-source',
+          layout: { visibility: 'visible' },
+          paint: {
+            'hillshade-exaggeration': 0.4
+          }
+        },
+        firstVectorLayerId
+      );
+    } else {
+      map.setPaintProperty('mapbox-hillshade-layer', 'hillshade-exaggeration', 0.4);
+    }
 
     // Edificios 3D
     if (map.getSource('composite') && !map.getLayer('3d-buildings-chancay')) {
@@ -512,7 +548,11 @@ function cinematicEasing(t) {
 
 function getSplitScreenCenter(coords, zoomLevel, bearingLevel) {
   const [lng, lat] = coords;
-  const shiftPixelsRight = window.innerWidth * 0.21;
+  // En modo 1280x1024, la tarjeta mide 495px con margen de 28px; el área libre izquierda va de 0 a 757px (centro en 378px).
+  // Para centrar el marcador en 378px de la pantalla, desplazamos el centro de Mapbox 262px a la derecha.
+  // En modo panorámico (16:9), el desplazamiento proporcional es del 21% del ancho.
+  const activeWidth = is1280Mode ? Math.min(window.innerWidth, 1280) : window.innerWidth;
+  const shiftPixelsRight = is1280Mode ? 262 : (activeWidth * 0.21);
   const worldSize = 512 * Math.pow(2, zoomLevel);
   const degPerPixel = 360 / worldSize;
   const rightAngleRad = ((bearingLevel + 90) * Math.PI) / 180;
@@ -649,6 +689,60 @@ window.addEventListener('online', () => {
   setOfflineMode(false);
 });
 
+// 9.b GESTIÓN DEL MODO RESOLUCIÓN (1280x1024 · 5:4 PROYECTOR)
+function updateResolutionHUD() {
+  const badge = document.getElementById('resolution-badge');
+  const toggleBtn = document.getElementById('toggle-resolution-mode');
+  const toggleLabel = document.getElementById('resolution-toggle-label');
+
+  document.body.classList.toggle('mode-1280x1024', is1280Mode);
+
+  if (badge) {
+    badge.textContent = is1280Mode ? 'PROYECTOR (1280x1024)' : 'PANORÁMICO (16:9)';
+    badge.classList.toggle('status-res-54', is1280Mode);
+    badge.classList.toggle('status-res-wide', !is1280Mode);
+  }
+
+  if (toggleBtn && toggleLabel) {
+    toggleBtn.classList.toggle('res-active', is1280Mode);
+    toggleLabel.textContent = is1280Mode ? 'Volver a 16:9' : 'Modo 1280x1024';
+  }
+}
+
+function setResolutionMode(targetState) {
+  is1280Mode = Boolean(targetState);
+  try {
+    localStorage.setItem('chancay_mode_1280x1024', is1280Mode ? 'true' : 'false');
+  } catch (_) {}
+
+  updateResolutionHUD();
+
+  if (map && mapReady) {
+    setTimeout(() => {
+      map.resize();
+      const currentSlide = Reveal.getCurrentSlide();
+      const currentIndex = Reveal.getIndices().h;
+      syncSlideWithMap(currentSlide, currentIndex);
+    }, 120);
+  }
+
+  if (typeof Reveal !== 'undefined' && Reveal.layout) {
+    Reveal.layout();
+  }
+}
+
+// Detección automática al redimensionar la ventana (solo si no hay preferencia forzada en localStorage ni por URL)
+window.addEventListener('resize', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('res') && !params.has('projector') && localStorage.getItem('chancay_mode_1280x1024') === null) {
+    const isSXGA = (window.innerWidth <= 1300 && window.innerHeight >= 900) ||
+                   (Math.abs(window.innerWidth / window.innerHeight - 1.25) < 0.08);
+    if (isSXGA !== is1280Mode) {
+      setResolutionMode(isSXGA);
+    }
+  }
+});
+
 // 10. INICIALIZACIÓN DE REVEAL.JS v5
 Reveal.initialize({
   controls: true,
@@ -771,6 +865,7 @@ Reveal.on('slidechanged', (event) => {
 
 Reveal.on('ready', (event) => {
   updateConnectionHUD();
+  updateResolutionHUD();
   if (isOfflineMode) {
     updateOfflineVideoForSlide(event.currentSlide, event.indexh);
   } else {
@@ -815,6 +910,13 @@ const offlineToggleBtn = document.getElementById('toggle-offline-mode');
 if (offlineToggleBtn) {
   offlineToggleBtn.addEventListener('click', () => {
     setOfflineMode(!isOfflineMode);
+  });
+}
+
+const resolutionToggleBtn = document.getElementById('toggle-resolution-mode');
+if (resolutionToggleBtn) {
+  resolutionToggleBtn.addEventListener('click', () => {
+    setResolutionMode(!is1280Mode);
   });
 }
 

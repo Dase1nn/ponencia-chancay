@@ -497,6 +497,56 @@ body.free-map-mode .reveal:hover {
   background: #ffffff;
 }
 
+/* Grupo de estado de Resolución (16:9 vs 1280x1024 5:4) en el HUD */
+.hud-resolution-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resolution-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.resolution-badge.status-res-wide {
+  background: var(--accent-cobalt-soft);
+  color: var(--accent-cobalt);
+  border: 1px solid var(--accent-cobalt-border);
+}
+
+.resolution-badge.status-res-54 {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.38);
+}
+
+.btn-hud-mode.res-active {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+.btn-hud-mode.res-active .dot-res {
+  background: #ffffff;
+}
+
+.dot-res {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7c3aed;
+}
+
 .btn-hud-interact {
   display: inline-flex;
   align-items: center;
@@ -1789,21 +1839,590 @@ strong {
   z-index: 35 !important;
 }
 
-/* Responsividad */
-@media (max-width: 1180px) {
-  .hero-grid-summary,
-  .three-col-grid,
-  .asymmetry-grid,
-  .veto-matrix {
+/* Responsividad general para pantallas pequeñas */
+@media (max-width: 980px) {
+  body:not(.mode-1280x1024) .hero-grid-summary,
+  body:not(.mode-1280x1024) .three-col-grid,
+  body:not(.mode-1280x1024) .asymmetry-grid,
+  body:not(.mode-1280x1024) .veto-matrix,
+  body:not(.mode-1280x1024) .conclusions-grid,
+  body:not(.mode-1280x1024) .proposals-grid {
     grid-template-columns: 1fr;
   }
 
-  .geo-card {
+  body:not(.mode-1280x1024) .geo-card {
     width: 44vw;
     min-width: 340px;
   }
 
-  .hud-telemetry {
+  body:not(.mode-1280x1024) .hud-telemetry {
     display: none;
+  }
+}
+
+/* ==========================================================================
+   11. MODO PROYECTOR AUDITORIO 1280x1024 (RELACIÓN 5:4 SXGA)
+   Optimización exhaustiva de encuadre, jerarquía, legibilidad y distribución
+   ========================================================================== */
+body.mode-1280x1024 {
+  background-color: #0b1322;
+}
+
+/* Encuadre en monitores amplios simulando el escenario 1280x1024 del auditorio */
+@media (min-width: 1281px) and (min-height: 1025px) {
+  body.mode-1280x1024 #map,
+  body.mode-1280x1024 .video-backdrop,
+  body.mode-1280x1024 .map-backdrop,
+  body.mode-1280x1024 .reveal {
+    width: 1280px !important;
+    height: 1024px !important;
+    left: calc(50% - 640px) !important;
+    top: calc(50% - 512px) !important;
+    box-shadow: 0 0 65px rgba(0, 0, 0, 0.55) !important;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  body.mode-1280x1024 .hud-header {
+    width: 1280px !important;
+    left: calc(50% - 640px) !important;
+    top: calc(50% - 512px) !important;
+    border-radius: 14px 14px 0 0;
+  }
+
+  body.mode-1280x1024 .anchor-nav {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: calc(50% - 496px) !important;
+  }
+}
+
+/* Despliegue en proyectores SXGA nativos (1280x1024) o ventanas ajustadas */
+@media (max-width: 1280px), (max-height: 1024px) {
+  body.mode-1280x1024 #map,
+  body.mode-1280x1024 .video-backdrop,
+  body.mode-1280x1024 .map-backdrop,
+  body.mode-1280x1024 .reveal {
+    width: 100vw !important;
+    height: 100vh !important;
+    left: 0 !important;
+    top: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.mode-1280x1024 .hud-header {
+    width: 100vw !important;
+    left: 0 !important;
+    top: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  body.mode-1280x1024 .anchor-nav {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: 16px !important;
+  }
+}
+
+/* --- HUD COMPACTO Y SIN SATURACIÓN PARA 1280x1024 --- */
+body.mode-1280x1024 .hud-header,
+@media (max-width: 1300px) {
+  .hud-header {
+    padding: 0 16px !important;
+    height: 50px !important;
+  }
+
+  .hud-brand {
+    gap: 6px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .hud-course,
+  .hud-divider {
+    display: none !important;
+  }
+
+  .hud-case {
+    font-size: 0.72rem !important;
+  }
+
+  .hud-telemetry {
+    display: flex !important;
+    gap: 7px !important;
+  }
+
+  .telemetry-item {
+    padding: 3px 8px !important;
+    font-size: 0.67rem !important;
+    gap: 5px !important;
+  }
+
+  .connection-badge,
+  .resolution-badge {
+    padding: 3px 7px !important;
+    font-size: 0.64rem !important;
+  }
+
+  .btn-hud-mode,
+  .btn-hud-interact {
+    padding: 3px 8px !important;
+    font-size: 0.68rem !important;
+    gap: 5px !important;
+  }
+
+  .hud-progress-pill {
+    padding: 3px 8px !important;
+    font-size: 0.68rem !important;
+  }
+}
+
+/* --- NAVEGACIÓN INFERIOR DE ZONAS ANCLA EN 1280x1024 --- */
+body.mode-1280x1024 .anchor-nav,
+@media (max-width: 1300px) {
+  .anchor-nav {
+    gap: 6px !important;
+    padding: 4px 8px !important;
+  }
+
+  .anchor-chip {
+    font-size: 0.7rem !important;
+    padding: 4px 9px !important;
+  }
+}
+
+/* --- SLIDES CONVENCIONALES (1–3 Y 10–12) EN 1280x1024 --- */
+body.mode-1280x1024 .conventional-slide,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .conventional-slide {
+    max-width: 1180px !important;
+    padding: 62px 28px 26px !important;
+  }
+}
+
+/* SLIDE 1: PORTADA HERO */
+body.mode-1280x1024 .hero-slide,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .hero-slide {
+    gap: 15px !important;
+  }
+
+  .hero-title {
+    font-size: 2.15rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.94rem !important;
+    line-height: 1.44 !important;
+    padding: 8px 14px !important;
+  }
+
+  .hero-grid-summary {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    margin-top: 4px !important;
+  }
+
+  .summary-pill {
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .summary-pill strong {
+    font-size: 0.95rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .summary-pill p {
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* SLIDE 2: ASIMETRÍA TERRITORIAL */
+body.mode-1280x1024 .asymmetry-grid,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .asymmetry-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+  }
+
+  .asymmetry-grid .glass-card {
+    padding: 16px 20px !important;
+    border-radius: 16px !important;
+  }
+
+  .asymmetry-card h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .metric-big {
+    font-size: 1.7rem !important;
+    margin: 2px 0 !important;
+  }
+
+  .housing-metrics {
+    gap: 6px !important;
+  }
+
+  .housing-pill {
+    padding: 7px 11px !important;
+    gap: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .housing-val {
+    font-size: 1.18rem !important;
+    min-width: 76px !important;
+  }
+
+  .housing-desc {
+    font-size: 0.8rem !important;
+    line-height: 1.35 !important;
+  }
+}
+
+/* SLIDE 3: MARCO TEÓRICO Y METODOLOGÍA */
+body.mode-1280x1024 .three-col-grid,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .three-col-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .three-col-grid .theory-card {
+    padding: 16px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .theory-card h3 {
+    font-size: 1.02rem !important;
+    margin: 6px 0 2px !important;
+  }
+
+  .theory-author {
+    font-size: 0.72rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .theory-body {
+    font-size: 0.81rem !important;
+    line-height: 1.38 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .clean-list {
+    gap: 6px !important;
+    padding-left: 16px !important;
+  }
+
+  .clean-list li {
+    font-size: 0.79rem !important;
+    line-height: 1.36 !important;
+  }
+
+  .methodology-banner {
+    margin-top: 12px !important;
+    padding: 10px 16px !important;
+    border-radius: 12px !important;
+    gap: 12px !important;
+  }
+
+  .method-label {
+    font-size: 0.72rem !important;
+    padding-right: 12px !important;
+  }
+
+  .method-content {
+    font-size: 0.81rem !important;
+    line-height: 1.38 !important;
+  }
+}
+
+/* --- SLIDES GEOESPACIALES (4–9) EN 1280x1024: ENCUADRE SPLIT Y TARJETA FLUIDA --- */
+body.mode-1280x1024 .map-slide-wrapper,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .map-slide-wrapper {
+    padding: 60px 24px 68px !important;
+  }
+
+  .geo-card {
+    width: 495px !important;
+    min-width: 470px !important;
+    max-width: 505px !important;
+    max-height: calc(100vh - 138px) !important;
+    padding: 20px 22px !important;
+    border-radius: 18px !important;
+  }
+
+  .geo-card-header {
+    margin-bottom: 8px !important;
+  }
+
+  .geo-card h2 {
+    font-size: 1.36rem !important;
+    margin-bottom: 8px !important;
+    line-height: 1.25 !important;
+  }
+
+  .geo-lead {
+    font-size: 0.86rem !important;
+    line-height: 1.45 !important;
+    margin: 0 0 12px !important;
+  }
+
+  .kpi-strip {
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .kpi-box {
+    padding: 8px 6px !important;
+    border-radius: 10px !important;
+  }
+
+  .kpi-num {
+    font-size: 1.45rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .kpi-label {
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .actor-banner {
+    padding: 8px 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .actor-banner strong {
+    font-size: 0.94rem !important;
+  }
+
+  .geo-list {
+    margin: 0 0 10px !important;
+    padding-left: 16px !important;
+    gap: 7px !important;
+  }
+
+  .geo-list li {
+    font-size: 0.83rem !important;
+    line-height: 1.38 !important;
+  }
+
+  .geo-insight {
+    padding: 9px 12px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
+    border-radius: 10px !important;
+  }
+
+  .dual-incident-box {
+    gap: 8px !important;
+  }
+
+  .incident-item {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .incident-item h4 {
+    font-size: 0.95rem !important;
+    margin-bottom: 3px !important;
+  }
+
+  .incident-item p {
+    font-size: 0.82rem !important;
+    line-height: 1.38 !important;
+  }
+
+  .map-legend-box {
+    padding: 9px 12px !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .legend-row {
+    font-size: 0.81rem !important;
+    line-height: 1.35 !important;
+    gap: 10px !important;
+  }
+
+  .legend-line {
+    width: 32px !important;
+  }
+
+  .highlight-stat-row {
+    padding: 9px 12px !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .big-badge-number {
+    font-size: 1.75rem !important;
+  }
+
+  .big-badge-text {
+    font-size: 0.81rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .topp-grid {
+    gap: 8px !important;
+  }
+
+  .topp-cell {
+    padding: 9px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .topp-cell p {
+    font-size: 0.82rem !important;
+    line-height: 1.38 !important;
+  }
+
+  .custom-marker.active-anchor .marker-label {
+    font-size: 0.86rem !important;
+    padding: 7px 14px !important;
+    margin-top: 6px !important;
+  }
+}
+
+/* SLIDE 10: MATRIZ DE VETO PLAYERS */
+body.mode-1280x1024 .veto-matrix,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .veto-matrix {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+  }
+
+  .veto-column {
+    padding: 14px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .veto-col-header h3 {
+    font-size: 1.1rem !important;
+    margin: 4px 0 2px !important;
+  }
+
+  .veto-items {
+    gap: 7px !important;
+  }
+
+  .veto-row {
+    padding: 7px 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .veto-actor {
+    font-size: 0.84rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .veto-power {
+    font-size: 0.77rem !important;
+    line-height: 1.32 !important;
+  }
+
+  .winset-synthesis {
+    margin-top: 12px !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .synthesis-lead {
+    font-size: 0.83rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* SLIDE 11: CONCLUSIONES Y HALLAZGOS */
+body.mode-1280x1024 .conclusions-grid,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .conclusions-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  .conclusion-card {
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .conclusion-card h3 {
+    font-size: 1.02rem !important;
+    margin: 4px 0 4px !important;
+  }
+
+  .conclusion-card p {
+    font-size: 0.81rem !important;
+    line-height: 1.38 !important;
+  }
+
+  .theoretical-takeaway {
+    margin-top: 12px !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .takeaway-lead {
+    font-size: 0.83rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* SLIDE 12: PROPUESTAS DE POLÍTICAS PÚBLICAS */
+body.mode-1280x1024 .proposals-grid,
+@media (max-width: 1300px) and (min-height: 850px) {
+  .proposals-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .proposal-col {
+    padding: 14px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .proposal-col h3 {
+    font-size: 1.02rem !important;
+    margin: 6px 0 4px !important;
+  }
+
+  .proposal-lead {
+    font-size: 0.81rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .proposal-actions {
+    gap: 6px !important;
+    padding-left: 14px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .proposal-actions li {
+    font-size: 0.77rem !important;
+    line-height: 1.34 !important;
+  }
+
+  .proposal-impact {
+    padding: 7px 9px !important;
+    font-size: 0.78rem !important;
+    line-height: 1.34 !important;
+    border-radius: 8px !important;
   }
 }
