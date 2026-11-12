@@ -100,7 +100,8 @@ const NATIONAL_NODES = [
     coords: [-81.2719, -4.5772],
     category: 'litoral',
     colorClass: 'marker-cyan',
-    hexColor: '#0284c7'
+    hexColor: '#0284c7',
+    placement: 'top-left'
   },
   {
     id: 'paita',
@@ -109,7 +110,8 @@ const NATIONAL_NODES = [
     coords: [-81.1144, -5.0892],
     category: 'litoral',
     colorClass: 'marker-cyan',
-    hexColor: '#0284c7'
+    hexColor: '#0284c7',
+    placement: 'bottom-right'
   },
   {
     id: 'chancay',
@@ -119,7 +121,8 @@ const NATIONAL_NODES = [
     category: 'litoral',
     colorClass: 'marker-cyan marker-highlight-hero',
     hexColor: '#0284c7',
-    isHero: true
+    isHero: true,
+    placement: 'left'
   },
   {
     id: 'ancon',
@@ -128,7 +131,8 @@ const NATIONAL_NODES = [
     coords: [-77.1736, -11.7764],
     category: 'litoral',
     colorClass: 'marker-cyan',
-    hexColor: '#0284c7'
+    hexColor: '#0284c7',
+    placement: 'bottom'
   },
   {
     id: 'marcona',
@@ -137,7 +141,8 @@ const NATIONAL_NODES = [
     coords: [-75.1619, -15.3622],
     category: 'litoral',
     colorClass: 'marker-cyan',
-    hexColor: '#0284c7'
+    hexColor: '#0284c7',
+    placement: 'left'
   },
   {
     id: 'corio',
@@ -146,7 +151,8 @@ const NATIONAL_NODES = [
     coords: [-71.7925, -17.1700],
     category: 'litoral',
     colorClass: 'marker-cyan',
-    hexColor: '#0284c7'
+    hexColor: '#0284c7',
+    placement: 'bottom-left'
   },
 
   // Eje Interior / Extractivo-Multimodal (Color Ámbar/Naranja)
@@ -157,7 +163,8 @@ const NATIONAL_NODES = [
     coords: [-72.0469, -13.3931],
     category: 'interior',
     colorClass: 'marker-amber',
-    hexColor: '#d97706'
+    hexColor: '#d97706',
+    placement: 'right'
   },
   {
     id: 'challhuahuacho',
@@ -166,7 +173,8 @@ const NATIONAL_NODES = [
     coords: [-72.2483, -14.1228],
     category: 'interior',
     colorClass: 'marker-amber',
-    hexColor: '#d97706'
+    hexColor: '#d97706',
+    placement: 'bottom'
   },
   {
     id: 'yurimaguas',
@@ -175,7 +183,8 @@ const NATIONAL_NODES = [
     coords: [-76.1036, -5.8969],
     category: 'interior',
     colorClass: 'marker-amber',
-    hexColor: '#d97706'
+    hexColor: '#d97706',
+    placement: 'right'
   },
   {
     id: 'puerto_maldonado',
@@ -184,7 +193,8 @@ const NATIONAL_NODES = [
     coords: [-69.1892, -12.5933],
     category: 'interior',
     colorClass: 'marker-amber',
-    hexColor: '#d97706'
+    hexColor: '#d97706',
+    placement: 'top'
   }
 ];
 
@@ -612,16 +622,19 @@ function initMapboxInstance() {
     // Marcadores a Escala Nacional para Slide 13 (Epílogo)
     NATIONAL_NODES.forEach((node) => {
       const el = document.createElement('div');
-      el.className = `national-marker ${node.colorClass} ${node.isHero ? 'is-hero' : ''}`;
+      el.className = `national-marker ${node.colorClass} ${node.isHero ? 'is-hero' : ''} callout-${node.placement || 'bottom-left'}`;
       el.style.display = 'none'; // ocultos por defecto en slides 1 a 12
       el.innerHTML = `
-        <div class="nat-pin-wrap">
+        <div class="nat-pin-anchor">
           <div class="nat-pulse"></div>
           <div class="nat-core"></div>
         </div>
-        <div class="nat-label-card">
-          <span class="nat-title">${node.title}</span>
-          <span class="nat-desc">${node.desc}</span>
+        <div class="nat-callout-wrap">
+          <div class="nat-label-card">
+            <span class="nat-title">${node.title}</span>
+            <span class="nat-desc">${node.desc}</span>
+          </div>
+          <div class="nat-callout-arrow"></div>
         </div>
       `;
 
@@ -632,7 +645,7 @@ function initMapboxInstance() {
         });
       }
 
-      new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+      new mapboxgl.Marker({ element: el, anchor: 'center' })
         .setLngLat(node.coords)
         .addTo(map);
 

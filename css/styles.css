@@ -2116,18 +2116,23 @@ body.mode-slide-national .anchor-nav {
   }
 }
 
-.nat-pin-wrap {
-  position: relative;
+.nat-pin-anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto;
+  z-index: 10;
 }
 
 .nat-core {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: 2.5px solid #ffffff;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.45);
@@ -2164,11 +2169,11 @@ body.mode-slide-national .anchor-nav {
 
 /* Caso Testigo Hero: Chancay (Destacado Protagonista) */
 .national-marker.is-hero {
-  z-index: 25;
+  z-index: 28;
 }
-.national-marker.is-hero .nat-pin-wrap {
-  width: 36px;
-  height: 36px;
+.national-marker.is-hero .nat-pin-anchor {
+  width: 38px;
+  height: 38px;
 }
 .national-marker.is-hero .nat-core {
   width: 18px;
@@ -2178,34 +2183,44 @@ body.mode-slide-national .anchor-nav {
   box-shadow: 0 0 24px rgba(2, 132, 199, 1), 0 4px 12px rgba(15, 23, 42, 0.5);
 }
 .national-marker.is-hero .nat-pulse {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   background: rgba(2, 132, 199, 0.65);
   animation: pulseRingActive 1.8s infinite cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Callout Wrapper & Label Card */
+.nat-callout-wrap {
+  position: absolute;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+}
+
 .nat-label-card {
-  margin-top: 4px;
+  width: max-content;
+  max-width: 165px;
   padding: 4px 10px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.20), 0 1px 3px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
-  pointer-events: auto;
-  white-space: nowrap;
+  position: relative;
+  text-align: center;
 }
 
 .nat-title {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: var(--text-navy-deep);
-  line-height: 1.15;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .nat-desc {
@@ -2213,7 +2228,9 @@ body.mode-slide-national .anchor-nav {
   font-size: 0.61rem;
   font-weight: 600;
   color: var(--text-slate-medium);
-  line-height: 1.15;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
 }
 
 .national-marker.marker-cyan .nat-desc {
@@ -2224,20 +2241,182 @@ body.mode-slide-national .anchor-nav {
 }
 
 .national-marker.is-hero .nat-label-card {
+  max-width: 220px;
   border: 2px solid var(--accent-cobalt-vivid);
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.32), 0 2px 8px rgba(15, 23, 42, 0.18);
-  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.36), 0 2px 8px rgba(15, 23, 42, 0.18);
+  padding: 6px 14px;
 }
 .national-marker.is-hero .nat-title {
-  font-size: 0.84rem;
+  font-size: 0.85rem;
   font-weight: 800;
   color: var(--accent-cobalt);
 }
 .national-marker.is-hero .nat-desc {
-  font-size: 0.66rem;
+  font-size: 0.67rem;
   font-weight: 700;
   color: var(--accent-amber-vivid);
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------
+   FLECHITAS / CALLOUT POINTERS DIRECCIONALES
+   ------------------------------------------------------------- */
+/* 1. TOP-LEFT (Talara: tarjeta arriba a la izquierda en el mar, flecha señala abajo-derecha al pin) */
+.callout-top-left .nat-callout-wrap {
+  right: 14px;
+  bottom: 14px;
+  align-items: flex-end;
+}
+.callout-top-left .nat-callout-arrow {
+  position: absolute;
+  bottom: -7px;
+  right: 6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid rgba(255, 255, 255, 0.95);
+  border-top: 8px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(1px 2px 2px rgba(15, 23, 42, 0.15));
+}
+
+/* 2. BOTTOM-LEFT (Paita, Challhuahuacho, Corio: tarjeta abajo a la izquierda, flecha señala arriba-derecha al pin) */
+.callout-bottom-left .nat-callout-wrap {
+  right: 14px;
+  top: 14px;
+  align-items: flex-end;
+}
+.callout-bottom-left .nat-callout-arrow {
+  position: absolute;
+  top: -7px;
+  right: 6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid rgba(255, 255, 255, 0.95);
+  border-bottom: 8px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(1px -1px 2px rgba(15, 23, 42, 0.15));
+}
+
+/* 3. LEFT (Chancay, Marcona: tarjeta a la izquierda en el mar, flecha señala a la derecha al pin) */
+.callout-left .nat-callout-wrap {
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: flex-end;
+}
+.callout-left .nat-callout-arrow {
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid rgba(255, 255, 255, 0.96);
+  filter: drop-shadow(2px 0 2px rgba(15, 23, 42, 0.15));
+}
+.national-marker.is-hero.callout-left .nat-callout-arrow {
+  border-left-color: rgba(255, 255, 255, 0.98);
+  border-width: 7px 0 7px 10px;
+  right: -10px;
+}
+
+/* 4. BOTTOM-RIGHT (Ancón: tarjeta abajo a la derecha hacia el interior, flecha señala arriba-izquierda al pin) */
+.callout-bottom-right .nat-callout-wrap {
+  left: 14px;
+  top: 14px;
+  align-items: flex-start;
+}
+.callout-bottom-right .nat-callout-arrow {
+  position: absolute;
+  top: -7px;
+  left: 6px;
+  width: 0;
+  height: 0;
+  border-right: 6px solid transparent;
+  border-left: 6px solid rgba(255, 255, 255, 0.95);
+  border-bottom: 8px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(-1px -1px 2px rgba(15, 23, 42, 0.15));
+}
+
+/* 5. TOP-RIGHT (Chinchero Cusco: tarjeta arriba a la derecha, flecha señala abajo-izquierda al pin) */
+.callout-top-right .nat-callout-wrap {
+  left: 14px;
+  bottom: 14px;
+  align-items: flex-start;
+}
+.callout-top-right .nat-callout-arrow {
+  position: absolute;
+  bottom: -7px;
+  left: 6px;
+  width: 0;
+  height: 0;
+  border-right: 6px solid transparent;
+  border-left: 6px solid rgba(255, 255, 255, 0.95);
+  border-top: 8px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(-1px 2px 2px rgba(15, 23, 42, 0.15));
+}
+
+/* 6. RIGHT (Yurimaguas: tarjeta a la derecha, flecha señala a la izquierda al pin) */
+.callout-right .nat-callout-wrap {
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: flex-start;
+}
+.callout-right .nat-callout-arrow {
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 8px solid rgba(255, 255, 255, 0.96);
+  filter: drop-shadow(-2px 0 2px rgba(15, 23, 42, 0.15));
+}
+
+/* 7. TOP (Puerto Maldonado: tarjeta arriba en la selva, flecha señala abajo al pin) */
+.callout-top .nat-callout-wrap {
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.callout-top .nat-callout-arrow {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 2px 2px rgba(15, 23, 42, 0.15));
+}
+
+/* 8. BOTTOM (Tarjeta abajo, flecha señala arriba al pin) */
+.callout-bottom .nat-callout-wrap {
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.callout-bottom .nat-callout-arrow {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 -2px 2px rgba(15, 23, 42, 0.15));
 }
 
 /* Estilos de la Tarjeta del Epílogo (Slide 13) - Modo Translúcido de Alta Definición */
