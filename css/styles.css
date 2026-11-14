@@ -1512,6 +1512,26 @@ strong {
   color: var(--text-charcoal);
 }
 
+/* Evidencia OSINT In-Card */
+.glass-evidence-img {
+  display: block;
+  width: 100%;
+  max-height: 145px;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  margin: 10px auto 12px;
+  opacity: 1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.glass-evidence-img.evidence-contain {
+  object-fit: contain;
+  background: #ffffff;
+  padding: 6px 10px;
+}
+
 /* Slide 7: Leyenda GeoJSON Vías */
 .map-legend-box {
   background: var(--glass-bg-pill);
@@ -3010,6 +3030,11 @@ body.mode-1280x1024 .topp-cell-compact .topp-badge {
 body.mode-1280x1024 .topp-cell-compact p {
   font-size: 0.9rem !important;
   line-height: 1.4 !important;
+}
+
+body.mode-1280x1024 .glass-evidence-img {
+  max-height: 112px !important;
+  margin: 6px 0 8px !important;
 }
 
 body.mode-1280x1024 .custom-marker.active-anchor .marker-label {
