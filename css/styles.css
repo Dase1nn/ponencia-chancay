@@ -901,17 +901,17 @@ strong {
 .kpi-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-top: 20px;
+  gap: 22px;
+  margin-top: 26px;
 }
 
 .kpi-card {
-  padding: 28px 24px;
-  border-radius: 18px;
+  padding: 36px 28px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 235px;
+  min-height: 310px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -927,7 +927,7 @@ strong {
 
 .kpi-tag {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.94rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -940,18 +940,18 @@ strong {
 
 .kpi-number {
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 1.8vw, 1.98rem);
+  font-size: clamp(1.8rem, 1.88vw, 2.08rem);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.03em;
-  margin: 12px 0;
+  margin: 14px 0;
   color: var(--text-navy-deep);
 }
 
 .kpi-desc {
   margin: 0;
-  font-size: 1.02rem;
-  line-height: 1.45;
+  font-size: 1.16rem;
+  line-height: 1.48;
   color: var(--text-charcoal);
   font-weight: 400;
 }
@@ -1632,10 +1632,13 @@ strong {
 
 .topp-cell-compact .topp-badge {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 5px 11px;
+  margin-bottom: 10px;
   display: inline-block;
+  align-self: flex-start;
 }
 
 .topp-cell-compact p {
@@ -1889,19 +1892,19 @@ strong {
 .proposal-step {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.94rem;
   font-weight: 700;
   color: var(--accent-amber);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .proposal-header h3 {
-  font-size: 1.34rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
 .proposal-body h4 {
-  font-size: 1.04rem;
+  font-size: 1.12rem;
   font-weight: 700;
   color: var(--accent-cobalt);
   margin-bottom: 8px;
@@ -1909,7 +1912,7 @@ strong {
 
 .proposal-body p,
 .proposal-body .proposal-lead {
-  font-size: 1.04rem;
+  font-size: 1.18rem;
   line-height: 1.44;
   color: var(--text-navy-deep);
   margin: 0 0 14px;
@@ -1920,12 +1923,12 @@ strong {
   padding-left: 18px;
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 12px;
 }
 
 .proposal-actions li {
-  font-size: 0.96rem;
-  line-height: 1.46;
+  font-size: 1.08rem;
+  line-height: 1.48;
   color: var(--text-charcoal);
 }
 
@@ -2800,28 +2803,28 @@ body.mode-1280x1024 .dim-label {
 /* SLIDE 2: CHANCAY EN CIFRAS (4 KPIS) */
 body.mode-1280x1024 .kpi-grid-4 {
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 14px !important;
-  margin-top: 18px !important;
+  gap: 16px !important;
+  margin-top: 22px !important;
 }
 
 body.mode-1280x1024 .kpi-card {
-  padding: 24px 18px !important;
-  min-height: 225px !important;
-  border-radius: 16px !important;
+  padding: 30px 22px !important;
+  min-height: 290px !important;
+  border-radius: 18px !important;
 }
 
 body.mode-1280x1024 .kpi-tag {
-  font-size: 0.8rem !important;
+  font-size: 0.88rem !important;
 }
 
 body.mode-1280x1024 .kpi-number {
-  font-size: 2.08rem !important;
-  margin: 10px 0 !important;
+  font-size: 1.86rem !important;
+  margin: 12px 0 !important;
 }
 
 body.mode-1280x1024 .kpi-desc {
-  font-size: 0.98rem !important;
-  line-height: 1.42 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.44 !important;
 }
 
 /* SLIDE 3: INSTRUMENTOS PARA EL ANÁLISIS DEL CASO CHANCAY */
@@ -2995,12 +2998,18 @@ body.mode-1280x1024 .topp-grid-2x2 {
 }
 
 body.mode-1280x1024 .topp-cell-compact {
-  padding: 10px 12px !important;
+  padding: 12px 14px !important;
+}
+
+body.mode-1280x1024 .topp-cell-compact .topp-badge {
+  font-size: 0.96rem !important;
+  padding: 4px 10px !important;
+  margin-bottom: 8px !important;
 }
 
 body.mode-1280x1024 .topp-cell-compact p {
-  font-size: 0.86rem !important;
-  line-height: 1.38 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
 }
 
 body.mode-1280x1024 .custom-marker.active-anchor .marker-label {
@@ -3103,29 +3112,29 @@ body.mode-1280x1024 .proposal-col {
 }
 
 body.mode-1280x1024 .proposal-step {
-  font-size: 0.78rem !important;
+  font-size: 0.86rem !important;
 }
 
 body.mode-1280x1024 .proposal-col h3 {
-  font-size: 1.24rem !important;
+  font-size: 1.36rem !important;
   margin: 4px 0 !important;
 }
 
 body.mode-1280x1024 .proposal-body .proposal-lead {
-  font-size: 0.98rem !important;
-  line-height: 1.4 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.42 !important;
   margin-bottom: 12px !important;
 }
 
 body.mode-1280x1024 .proposal-actions {
-  gap: 9px !important;
+  gap: 10px !important;
   padding-left: 16px !important;
   margin-bottom: 0 !important;
 }
 
 body.mode-1280x1024 .proposal-actions li {
-  font-size: 0.91rem !important;
-  line-height: 1.42 !important;
+  font-size: 1.02rem !important;
+  line-height: 1.44 !important;
 }
 
 /* SLIDE 13: EPÍLOGO Y TRANSFERIBILIDAD NACIONAL (MODO 1280x1024) */
