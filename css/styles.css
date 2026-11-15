@@ -3039,10 +3039,16 @@ body.mode-1024x768 .glass-evidence-img {
   margin: 6px 0 8px !important;
 }
 
-/* En modo 1024x768 (Slides 04–09), ocultar etiquetas flotantes y dejar solo un punto pequeño señalando el lugar */
-body.mode-1024x768 .custom-marker .marker-label,
-body.mode-1024x768 .custom-marker.active-anchor .marker-label {
+/* En modo 1024x768 (Slides 04–09), ocultar etiquetas de puntos inactivos y mostrar solo la etiqueta del punto activo */
+body.mode-1024x768 .custom-marker:not(.active-anchor) .marker-label {
   display: none !important;
+}
+
+body.mode-1024x768 .custom-marker.active-anchor .marker-label {
+  display: inline-block !important;
+  font-size: 0.78rem !important;
+  padding: 5px 11px !important;
+  margin-top: 6px !important;
 }
 
 body.mode-1024x768 .custom-marker:not(.active-anchor) .marker-core {
