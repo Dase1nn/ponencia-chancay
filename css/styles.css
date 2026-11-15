@@ -2616,68 +2616,68 @@ body.mode-slide-national .anchor-nav {
 
 /* Responsividad general para pantallas pequeñas */
 @media (max-width: 980px) {
-  body:not(.mode-1280x1024) .hero-grid-summary,
-  body:not(.mode-1280x1024) .three-col-grid,
-  body:not(.mode-1280x1024) .asymmetry-grid,
-  body:not(.mode-1280x1024) .veto-matrix,
-  body:not(.mode-1280x1024) .conclusions-grid,
-  body:not(.mode-1280x1024) .proposals-grid {
+  body:not(.mode-1024x768) .hero-grid-summary,
+  body:not(.mode-1024x768) .three-col-grid,
+  body:not(.mode-1024x768) .asymmetry-grid,
+  body:not(.mode-1024x768) .veto-matrix,
+  body:not(.mode-1024x768) .conclusions-grid,
+  body:not(.mode-1024x768) .proposals-grid {
     grid-template-columns: 1fr;
   }
 
-  body:not(.mode-1280x1024) .geo-card {
+  body:not(.mode-1024x768) .geo-card {
     width: 44vw;
     min-width: 340px;
   }
 
-  body:not(.mode-1280x1024) .hud-telemetry {
+  body:not(.mode-1024x768) .hud-telemetry {
     display: none;
   }
 }
 
 /* ==========================================================================
-   11. MODO PROYECTOR AUDITORIO 1280x1024 (RELACIÓN 5:4 SXGA)
+   11. MODO PROYECTOR AUDITORIO 1024x768 (RELACIÓN 4:3 XGA)
    Optimización exhaustiva de encuadre, jerarquía, legibilidad y distribución
    ========================================================================== */
-body.mode-1280x1024 {
+body.mode-1024x768 {
   background-color: #0b1322;
 }
 
-/* Encuadre en monitores amplios simulando el escenario 1280x1024 del auditorio */
-@media (min-width: 1281px) and (min-height: 1025px) {
-  body.mode-1280x1024 #map,
-  body.mode-1280x1024 .video-backdrop,
-  body.mode-1280x1024 .map-backdrop,
-  body.mode-1280x1024 .reveal {
-    width: 1280px !important;
-    height: 1024px !important;
-    left: calc(50% - 640px) !important;
-    top: calc(50% - 512px) !important;
+/* Encuadre en monitores amplios simulando el escenario 1024x768 del auditorio */
+@media (min-width: 1025px) and (min-height: 769px) {
+  body.mode-1024x768 #map,
+  body.mode-1024x768 .video-backdrop,
+  body.mode-1024x768 .map-backdrop,
+  body.mode-1024x768 .reveal {
+    width: 1024px !important;
+    height: 768px !important;
+    left: calc(50% - 512px) !important;
+    top: calc(50% - 384px) !important;
     box-shadow: 0 0 65px rgba(0, 0, 0, 0.55) !important;
     border-radius: 14px;
     overflow: hidden;
   }
 
-  body.mode-1280x1024 .hud-header {
-    width: 1280px !important;
-    left: calc(50% - 640px) !important;
-    top: calc(50% - 512px) !important;
+  body.mode-1024x768 .hud-header {
+    width: 1024px !important;
+    left: calc(50% - 512px) !important;
+    top: calc(50% - 384px) !important;
     border-radius: 14px 14px 0 0;
   }
 
-  body.mode-1280x1024 .anchor-nav {
+  body.mode-1024x768 .anchor-nav {
     left: 50% !important;
     transform: translateX(-50%) !important;
-    bottom: calc(50% - 496px) !important;
+    bottom: calc(50% - 372px) !important;
   }
 }
 
-/* Despliegue en proyectores SXGA nativos (1280x1024) o ventanas ajustadas */
-@media (max-width: 1280px), (max-height: 1024px) {
-  body.mode-1280x1024 #map,
-  body.mode-1280x1024 .video-backdrop,
-  body.mode-1280x1024 .map-backdrop,
-  body.mode-1280x1024 .reveal {
+/* Despliegue en proyectores XGA nativos (1024x768) o ventanas ajustadas */
+@media (max-width: 1024px), (max-height: 768px) {
+  body.mode-1024x768 #map,
+  body.mode-1024x768 .video-backdrop,
+  body.mode-1024x768 .map-backdrop,
+  body.mode-1024x768 .reveal {
     width: 100vw !important;
     height: 100vh !important;
     left: 0 !important;
@@ -2686,518 +2686,521 @@ body.mode-1280x1024 {
     box-shadow: none !important;
   }
 
-  body.mode-1280x1024 .hud-header {
+  body.mode-1024x768 .hud-header {
     width: 100vw !important;
     left: 0 !important;
     top: 0 !important;
     border-radius: 0 !important;
   }
 
-  body.mode-1280x1024 .anchor-nav {
+  body.mode-1024x768 .anchor-nav {
     left: 50% !important;
     transform: translateX(-50%) !important;
-    bottom: 16px !important;
+    bottom: 12px !important;
   }
 }
 
 /* --- HUD COMPACTO Y SIN SATURACIÓN PARA 1280x1024 --- */
-body.mode-1280x1024 .hud-header {
+body.mode-1024x768 .hud-header {
   padding: 0 16px !important;
   height: 50px !important;
 }
 
-body.mode-1280x1024 .hud-brand {
+body.mode-1024x768 .hud-brand {
   gap: 6px !important;
   font-size: 0.7rem !important;
 }
 
-body.mode-1280x1024 .hud-course,
-body.mode-1280x1024 .hud-divider {
+body.mode-1024x768 .hud-course,
+body.mode-1024x768 .hud-divider {
   display: none !important;
 }
 
-body.mode-1280x1024 .hud-case {
+body.mode-1024x768 .hud-case {
   font-size: 0.72rem !important;
 }
 
-body.mode-1280x1024 .hud-telemetry {
+body.mode-1024x768 .hud-telemetry {
   display: flex !important;
   gap: 7px !important;
 }
 
-body.mode-1280x1024 .telemetry-item {
+body.mode-1024x768 .telemetry-item {
   padding: 3px 8px !important;
   font-size: 0.67rem !important;
   gap: 5px !important;
 }
 
-body.mode-1280x1024 .connection-badge,
-body.mode-1280x1024 .resolution-badge {
+body.mode-1024x768 .connection-badge,
+body.mode-1024x768 .resolution-badge {
   padding: 3px 7px !important;
   font-size: 0.64rem !important;
 }
 
-body.mode-1280x1024 .btn-hud-mode,
-body.mode-1280x1024 .btn-hud-interact {
+body.mode-1024x768 .btn-hud-mode,
+body.mode-1024x768 .btn-hud-interact {
   padding: 3px 8px !important;
   font-size: 0.68rem !important;
   gap: 5px !important;
 }
 
-body.mode-1280x1024 .hud-progress-pill {
+body.mode-1024x768 .hud-progress-pill {
   padding: 3px 8px !important;
   font-size: 0.68rem !important;
 }
 
-/* --- NAVEGACIÓN INFERIOR DE ZONAS ANCLA EN 1280x1024 --- */
-body.mode-1280x1024 .anchor-nav {
-  gap: 6px !important;
-  padding: 4px 8px !important;
+/* --- NAVEGACIÓN INFERIOR DE ZONAS ANCLA EN 1024x768 --- */
+body.mode-1024x768 .anchor-nav {
+  gap: 4px !important;
+  padding: 4px 6px !important;
+  max-width: 990px !important;
 }
 
-body.mode-1280x1024 .anchor-chip {
-  font-size: 0.72rem !important;
-  padding: 5px 10px !important;
+body.mode-1024x768 .anchor-chip {
+  font-size: 0.65rem !important;
+  padding: 4px 7px !important;
+  white-space: nowrap !important;
 }
 
 /* --- SLIDES CONVENCIONALES (1–3 Y 10–12) EN 1280x1024 --- */
-body.mode-1280x1024 .conventional-slide {
+body.mode-1024x768 .conventional-slide {
   max-width: 1180px !important;
   padding: 64px 28px 28px !important;
 }
 
-body.mode-1280x1024 .section-header {
+body.mode-1024x768 .section-header {
   margin-bottom: 18px !important;
 }
 
-body.mode-1280x1024 .section-tag {
+body.mode-1024x768 .section-tag {
   font-size: 0.84rem !important;
   margin-bottom: 6px !important;
 }
 
-body.mode-1280x1024 .section-header h2 {
+body.mode-1024x768 .section-header h2 {
   font-size: 2.15rem !important;
   line-height: 1.15 !important;
 }
 
-body.mode-1280x1024 .section-header h2.slide-title-hero {
+body.mode-1024x768 .section-header h2.slide-title-hero {
   font-size: 2.55rem !important;
   line-height: 1.12 !important;
 }
 
-body.mode-1280x1024 .section-lead {
+body.mode-1024x768 .section-lead {
   font-size: 1.04rem !important;
   line-height: 1.45 !important;
   margin-top: 8px !important;
 }
 
 /* SLIDE 1: PORTADA HERO */
-body.mode-1280x1024 .hero-slide {
+body.mode-1024x768 .hero-slide {
   gap: 16px !important;
 }
 
-body.mode-1280x1024 .hero-title {
+body.mode-1024x768 .hero-title {
   font-size: 2.25rem !important;
   line-height: 1.18 !important;
 }
 
-body.mode-1280x1024 .hero-subtitle {
+body.mode-1024x768 .hero-subtitle {
   font-size: 1.02rem !important;
   line-height: 1.46 !important;
   padding: 10px 16px !important;
 }
 
-body.mode-1280x1024 .dimensions-strip {
+body.mode-1024x768 .dimensions-strip {
   gap: 12px !important;
   margin-top: 6px !important;
 }
 
-body.mode-1280x1024 .dimension-pill {
+body.mode-1024x768 .dimension-pill {
   padding: 11px 16px !important;
 }
 
-body.mode-1280x1024 .dim-label {
+body.mode-1024x768 .dim-label {
   font-size: 0.94rem !important;
 }
 
 /* SLIDE 2: CHANCAY EN CIFRAS (4 KPIS) */
-body.mode-1280x1024 .kpi-grid-4 {
+body.mode-1024x768 .kpi-grid-4 {
   grid-template-columns: repeat(4, 1fr) !important;
   gap: 16px !important;
   margin-top: 22px !important;
 }
 
-body.mode-1280x1024 .kpi-card {
+body.mode-1024x768 .kpi-card {
   padding: 30px 22px !important;
   min-height: 290px !important;
   border-radius: 18px !important;
 }
 
-body.mode-1280x1024 .kpi-tag {
+body.mode-1024x768 .kpi-tag {
   font-size: 0.88rem !important;
 }
 
-body.mode-1280x1024 .kpi-number {
+body.mode-1024x768 .kpi-number {
   font-size: 1.86rem !important;
   margin: 12px 0 !important;
 }
 
-body.mode-1280x1024 .kpi-desc {
+body.mode-1024x768 .kpi-desc {
   font-size: 1.1rem !important;
   line-height: 1.44 !important;
 }
 
 /* SLIDE 3: INSTRUMENTOS PARA EL ANÁLISIS DEL CASO CHANCAY */
-body.mode-1280x1024 .methodology-banner {
+body.mode-1024x768 .methodology-banner {
   padding: 16px 20px !important;
   border-radius: 14px !important;
   gap: 16px !important;
 }
 
-body.mode-1280x1024 .methodology-banner-top {
+body.mode-1024x768 .methodology-banner-top {
   margin-top: 0 !important;
   margin-bottom: 16px !important;
 }
 
-body.mode-1280x1024 .method-label {
+body.mode-1024x768 .method-label {
   font-size: 0.88rem !important;
   padding-right: 16px !important;
 }
 
-body.mode-1280x1024 .method-content {
+body.mode-1024x768 .method-content {
   font-size: 0.98rem !important;
   line-height: 1.44 !important;
 }
 
-body.mode-1280x1024 .three-col-grid {
+body.mode-1024x768 .three-col-grid {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 14px !important;
 }
 
-body.mode-1280x1024 .three-col-grid .theory-card {
+body.mode-1024x768 .three-col-grid .theory-card {
   padding: 18px 18px !important;
   border-radius: 16px !important;
 }
 
-body.mode-1280x1024 .theory-card h3 {
+body.mode-1024x768 .theory-card h3 {
   font-size: 1.18rem !important;
   margin: 8px 0 3px !important;
 }
 
-body.mode-1280x1024 .theory-author {
+body.mode-1024x768 .theory-author {
   font-size: 0.8rem !important;
   margin-bottom: 10px !important;
 }
 
-body.mode-1280x1024 .clean-list {
+body.mode-1024x768 .clean-list {
   gap: 8px !important;
   padding-left: 16px !important;
 }
 
-body.mode-1280x1024 .clean-list li {
+body.mode-1024x768 .clean-list li {
   font-size: 0.9rem !important;
   line-height: 1.4 !important;
 }
 
-/* --- SLIDES GEOESPACIALES (4–9) EN 1280x1024 --- */
-body.mode-1280x1024 .map-slide-wrapper {
-  padding: 60px 24px 68px !important;
+/* --- SLIDES GEOESPACIALES (4–9) EN 1024x768 --- */
+body.mode-1024x768 .map-slide-wrapper {
+  padding: 58px 18px 54px !important;
 }
 
-body.mode-1280x1024 .geo-card {
-  width: 520px !important;
-  min-width: 490px !important;
-  max-width: 530px !important;
-  max-height: calc(100vh - 134px) !important;
-  padding: 24px 26px !important;
-  border-radius: 18px !important;
+body.mode-1024x768 .geo-card {
+  width: 430px !important;
+  min-width: 410px !important;
+  max-width: 440px !important;
+  max-height: 100% !important;
+  padding: 18px 20px !important;
+  border-radius: 16px !important;
 }
 
-body.mode-1280x1024 .geo-card-header {
+body.mode-1024x768 .geo-card-header {
   margin-bottom: 10px !important;
 }
 
-body.mode-1280x1024 .geo-card h2 {
+body.mode-1024x768 .geo-card h2 {
   font-size: 1.66rem !important;
   margin-bottom: 10px !important;
   line-height: 1.2 !important;
 }
 
-body.mode-1280x1024 .geo-lead {
+body.mode-1024x768 .geo-lead {
   font-size: 0.98rem !important;
   line-height: 1.46 !important;
   margin: 0 0 14px !important;
 }
 
-body.mode-1280x1024 .progress-pill-text {
+body.mode-1024x768 .progress-pill-text {
   font-size: 0.96rem !important;
 }
 
-body.mode-1280x1024 .progress-pill-num {
+body.mode-1024x768 .progress-pill-num {
   font-size: 1.7rem !important;
 }
 
-body.mode-1280x1024 .source-tag {
+body.mode-1024x768 .source-tag {
   font-size: 0.78rem !important;
 }
 
-body.mode-1280x1024 .actor-banner {
+body.mode-1024x768 .actor-banner {
   padding: 10px 14px !important;
   margin-bottom: 12px !important;
   border-radius: 10px !important;
 }
 
-body.mode-1280x1024 .actor-banner strong {
+body.mode-1024x768 .actor-banner strong {
   font-size: 1.04rem !important;
 }
 
-body.mode-1280x1024 .geo-list {
+body.mode-1024x768 .geo-list {
   margin: 0 0 12px !important;
   padding-left: 18px !important;
   gap: 9px !important;
 }
 
-body.mode-1280x1024 .geo-list li {
+body.mode-1024x768 .geo-list li {
   font-size: 0.94rem !important;
   line-height: 1.44 !important;
 }
 
-body.mode-1280x1024 .geo-insight {
+body.mode-1024x768 .geo-insight {
   padding: 11px 14px !important;
   font-size: 0.92rem !important;
   line-height: 1.44 !important;
   border-radius: 10px !important;
 }
 
-body.mode-1280x1024 .dual-incident-box {
+body.mode-1024x768 .dual-incident-box {
   gap: 10px !important;
 }
 
-body.mode-1280x1024 .incident-item {
+body.mode-1024x768 .incident-item {
   padding: 12px 14px !important;
   border-radius: 12px !important;
 }
 
-body.mode-1280x1024 .incident-item h4 {
+body.mode-1024x768 .incident-item h4 {
   font-size: 1.06rem !important;
   margin-bottom: 4px !important;
 }
 
-body.mode-1280x1024 .incident-item p {
+body.mode-1024x768 .incident-item p {
   font-size: 0.92rem !important;
   line-height: 1.42 !important;
 }
 
-body.mode-1280x1024 .vias-box-title {
+body.mode-1024x768 .vias-box-title {
   font-size: 0.98rem !important;
 }
 
-body.mode-1280x1024 .vias-box-desc {
+body.mode-1024x768 .vias-box-desc {
   font-size: 0.88rem !important;
 }
 
-body.mode-1280x1024 .highlight-stat-row {
+body.mode-1024x768 .highlight-stat-row {
   padding: 11px 14px !important;
   gap: 12px !important;
   margin-bottom: 12px !important;
   border-radius: 12px !important;
 }
 
-body.mode-1280x1024 .big-badge-number {
+body.mode-1024x768 .big-badge-number {
   font-size: 2rem !important;
 }
 
-body.mode-1280x1024 .big-badge-text {
+body.mode-1024x768 .big-badge-text {
   font-size: 0.92rem !important;
   line-height: 1.4 !important;
 }
 
-body.mode-1280x1024 .topp-grid-2x2 {
+body.mode-1024x768 .topp-grid-2x2 {
   gap: 10px !important;
 }
 
-body.mode-1280x1024 .topp-cell-compact {
+body.mode-1024x768 .topp-cell-compact {
   padding: 12px 14px !important;
 }
 
-body.mode-1280x1024 .topp-cell-compact .topp-badge {
+body.mode-1024x768 .topp-cell-compact .topp-badge {
   font-size: 0.96rem !important;
   padding: 4px 10px !important;
   margin-bottom: 8px !important;
 }
 
-body.mode-1280x1024 .topp-cell-compact p {
+body.mode-1024x768 .topp-cell-compact p {
   font-size: 0.9rem !important;
   line-height: 1.4 !important;
 }
 
-body.mode-1280x1024 .glass-evidence-img {
+body.mode-1024x768 .glass-evidence-img {
   max-height: 112px !important;
   margin: 6px 0 8px !important;
 }
 
-body.mode-1280x1024 .custom-marker.active-anchor .marker-label {
+body.mode-1024x768 .custom-marker.active-anchor .marker-label {
   font-size: 0.88rem !important;
   padding: 7px 14px !important;
   margin-top: 6px !important;
 }
 
 /* SLIDE 10: MATRIZ DE VETO PLAYERS */
-body.mode-1280x1024 .veto-matrix {
+body.mode-1024x768 .veto-matrix {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
   gap: 16px !important;
 }
 
-body.mode-1280x1024 .veto-column {
+body.mode-1024x768 .veto-column {
   padding: 18px 20px !important;
   border-radius: 16px !important;
 }
 
-body.mode-1280x1024 .veto-col-header h3 {
+body.mode-1024x768 .veto-col-header h3 {
   font-size: 1.24rem !important;
   margin: 6px 0 6px !important;
 }
 
-body.mode-1280x1024 .veto-items {
+body.mode-1024x768 .veto-items {
   gap: 9px !important;
 }
 
-body.mode-1280x1024 .veto-row {
+body.mode-1024x768 .veto-row {
   padding: 10px 13px !important;
   border-radius: 10px !important;
 }
 
-body.mode-1280x1024 .veto-actor {
+body.mode-1024x768 .veto-actor {
   font-size: 0.95rem !important;
   margin-bottom: 3px !important;
 }
 
-body.mode-1280x1024 .veto-power {
+body.mode-1024x768 .veto-power {
   font-size: 0.88rem !important;
   line-height: 1.38 !important;
 }
 
-body.mode-1280x1024 .winset-synthesis {
+body.mode-1024x768 .winset-synthesis {
   margin-top: 12px !important;
   padding: 12px 15px !important;
   border-radius: 12px !important;
 }
 
-body.mode-1280x1024 .winset-synthesis p {
+body.mode-1024x768 .winset-synthesis p {
   font-size: 0.9rem !important;
   line-height: 1.4 !important;
 }
 
 /* SLIDE 11: HALLAZGOS Y CONCLUSIONES (3 TARJETAS GRANDES) */
-body.mode-1280x1024 .conclusions-grid,
-body.mode-1280x1024 .conclusions-grid-large {
+body.mode-1024x768 .conclusions-grid,
+body.mode-1024x768 .conclusions-grid-large {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 18px !important;
   margin-top: 14px !important;
 }
 
-body.mode-1280x1024 .conclusions-grid .conclusion-card,
-body.mode-1280x1024 .conclusions-grid-large .conclusion-card {
+body.mode-1024x768 .conclusions-grid .conclusion-card,
+body.mode-1024x768 .conclusions-grid-large .conclusion-card {
   padding: 28px 24px !important;
   min-height: 295px !important;
   border-radius: 18px !important;
 }
 
-body.mode-1280x1024 .conclusion-icon {
+body.mode-1024x768 .conclusion-icon {
   width: 44px !important;
   height: 44px !important;
   font-size: 1.08rem !important;
   margin-bottom: 16px !important;
 }
 
-body.mode-1280x1024 .conclusion-card h3 {
+body.mode-1024x768 .conclusion-card h3 {
   font-size: 1.38rem !important;
   margin: 0 0 12px !important;
   line-height: 1.24 !important;
 }
 
-body.mode-1280x1024 .conclusion-card p {
+body.mode-1024x768 .conclusion-card p {
   font-size: 1.04rem !important;
   line-height: 1.52 !important;
 }
 
 /* SLIDE 12: PROPUESTAS */
-body.mode-1280x1024 .proposals-grid {
+body.mode-1024x768 .proposals-grid {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 14px !important;
 }
 
-body.mode-1280x1024 .proposal-col {
+body.mode-1024x768 .proposal-col {
   padding: 20px 18px !important;
   border-radius: 16px !important;
 }
 
-body.mode-1280x1024 .proposal-step {
+body.mode-1024x768 .proposal-step {
   font-size: 0.86rem !important;
 }
 
-body.mode-1280x1024 .proposal-col h3 {
+body.mode-1024x768 .proposal-col h3 {
   font-size: 1.36rem !important;
   margin: 4px 0 !important;
 }
 
-body.mode-1280x1024 .proposal-body .proposal-lead {
+body.mode-1024x768 .proposal-body .proposal-lead {
   font-size: 1.1rem !important;
   line-height: 1.42 !important;
   margin-bottom: 12px !important;
 }
 
-body.mode-1280x1024 .proposal-actions {
+body.mode-1024x768 .proposal-actions {
   gap: 10px !important;
   padding-left: 16px !important;
   margin-bottom: 0 !important;
 }
 
-body.mode-1280x1024 .proposal-actions li {
+body.mode-1024x768 .proposal-actions li {
   font-size: 1.02rem !important;
   line-height: 1.44 !important;
 }
 
-/* SLIDE 13: EPÍLOGO Y TRANSFERIBILIDAD NACIONAL (MODO 1280x1024) */
-body.mode-1280x1024 .epilogue-card {
-  width: 460px !important;
-  max-width: 460px !important;
-  padding: 26px 26px !important;
-  margin-right: 26px !important;
+/* SLIDE 13: EPÍLOGO Y TRANSFERIBILIDAD NACIONAL (MODO 1024x768) */
+body.mode-1024x768 .epilogue-card {
+  width: 390px !important;
+  min-width: 370px !important;
+  max-width: 395px !important;
+  padding: 20px 20px !important;
+  margin-right: 16px !important;
   background: rgba(255, 255, 255, 0.44) !important;
   backdrop-filter: blur(28px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
 }
 
-body.mode-1280x1024 .epilogue-subtitle {
+body.mode-1024x768 .epilogue-subtitle {
   font-size: 1.24rem !important;
   line-height: 1.34 !important;
   margin-bottom: 16px !important;
 }
 
-body.mode-1280x1024 .epilogue-takeaways {
+body.mode-1024x768 .epilogue-takeaways {
   gap: 12px !important;
   margin: 0 !important;
 }
 
-body.mode-1280x1024 .takeaway-item {
+body.mode-1024x768 .takeaway-item {
   padding: 13px 15px !important;
   gap: 12px !important;
   border-radius: 12px !important;
   background: rgba(255, 255, 255, 0.50) !important;
 }
 
-body.mode-1280x1024 .takeaway-num {
+body.mode-1024x768 .takeaway-num {
   min-width: 30px !important;
   height: 30px !important;
   font-size: 0.88rem !important;
 }
 
-body.mode-1280x1024 .takeaway-text {
+body.mode-1024x768 .takeaway-text {
   font-size: 0.92rem !important;
   line-height: 1.42 !important;
 }

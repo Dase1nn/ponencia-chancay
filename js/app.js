@@ -337,14 +337,15 @@ const GEOJSON_PORT_CORRIDOR = {
 // 5. ESTADO DE CONEXIÓN (ONLINE / OFFLINE) Y VARIABLES DE INSTANCIA
 let isOfflineMode = !navigator.onLine;
 
-// Estado de Resolución: Modo Proyector 1280x1024 (Relación 5:4 SXGA para Auditorios)
+// Estado de Resolución: Modo Proyector 1024x768 (Relación 4:3 XGA para Auditorios)
 const urlParams = new URLSearchParams(window.location.search);
 let is1280Mode = (
+  urlParams.get('res') === '1024' ||
   urlParams.get('res') === '1280' ||
   urlParams.get('projector') === 'true' ||
-  urlParams.get('mode') === '1280' ||
-  localStorage.getItem('chancay_mode_1280x1024') === 'true' ||
-  ((window.innerWidth <= 1300 && window.innerHeight >= 900) && localStorage.getItem('chancay_mode_1280x1024') !== 'false')
+  urlParams.get('mode') === '1024' ||
+  localStorage.getItem('chancay_mode_1024x768') === 'true' ||
+  ((window.innerWidth <= 1080 && window.innerHeight <= 820) && localStorage.getItem('chancay_mode_1024x768') !== 'false')
 );
 
 let map = null;
@@ -698,11 +699,11 @@ function cinematicEasing(t) {
 
 function getSplitScreenCenter(coords, zoomLevel, bearingLevel) {
   const [lng, lat] = coords;
-  // En modo 1280x1024, la tarjeta mide 495px con margen de 28px; el área libre izquierda va de 0 a 757px (centro en 378px).
-  // Para centrar el marcador en 378px de la pantalla, desplazamos el centro de Mapbox 262px a la derecha.
+  // En modo proyector 1024x768, la tarjeta mide ~430px con margen de 18px; el área libre izquierda va de 0 a 576px (centro en 288px).
+  // Desplazamos el centro de Mapbox ~225px a la derecha (22% de 1024px) para mantener los puntos ancla centrados a la izquierda.
   // En modo panorámico (16:9), el desplazamiento proporcional es del 21% del ancho.
-  const activeWidth = is1280Mode ? Math.min(window.innerWidth, 1280) : window.innerWidth;
-  const shiftPixelsRight = is1280Mode ? 262 : (activeWidth * 0.21);
+  const activeWidth = is1280Mode ? Math.min(window.innerWidth, 1024) : window.innerWidth;
+  const shiftPixelsRight = is1280Mode ? Math.round(activeWidth * 0.22) : (activeWidth * 0.21);
   const worldSize = 512 * Math.pow(2, zoomLevel);
   const degPerPixel = 360 / worldSize;
   const rightAngleRad = ((bearingLevel + 90) * Math.PI) / 180;
@@ -839,30 +840,30 @@ window.addEventListener('online', () => {
   setOfflineMode(false);
 });
 
-// 9.b GESTIÓN DEL MODO RESOLUCIÓN (1280x1024 · 5:4 PROYECTOR)
+// 9.b GESTIÓN DEL MODO RESOLUCIÓN (1024x768 · 4:3 PROYECTOR)
 function updateResolutionHUD() {
   const badge = document.getElementById('resolution-badge');
   const toggleBtn = document.getElementById('toggle-resolution-mode');
   const toggleLabel = document.getElementById('resolution-toggle-label');
 
-  document.body.classList.toggle('mode-1280x1024', is1280Mode);
+  document.body.classList.toggle('mode-1024x768', is1280Mode);
 
   if (badge) {
-    badge.textContent = is1280Mode ? 'PROYECTOR (1280x1024)' : 'PANORÁMICO (16:9)';
+    badge.textContent = is1280Mode ? 'PROYECTOR (1024x768)' : 'PANORÁMICO (16:9)';
     badge.classList.toggle('status-res-54', is1280Mode);
     badge.classList.toggle('status-res-wide', !is1280Mode);
   }
 
   if (toggleBtn && toggleLabel) {
     toggleBtn.classList.toggle('res-active', is1280Mode);
-    toggleLabel.textContent = is1280Mode ? 'Volver a 16:9' : 'Modo 1280x1024';
+    toggleLabel.textContent = is1280Mode ? 'Volver a 16:9' : 'Modo 1024x768';
   }
 }
 
 function setResolutionMode(targetState) {
   is1280Mode = Boolean(targetState);
   try {
-    localStorage.setItem('chancay_mode_1280x1024', is1280Mode ? 'true' : 'false');
+    localStorage.setItem('chancay_mode_1024x768', is1280Mode ? 'true' : 'false');
   } catch (_) {}
 
   updateResolutionHUD();
@@ -884,11 +885,11 @@ function setResolutionMode(targetState) {
 // Detección automática al redimensionar la ventana (solo si no hay preferencia forzada en localStorage ni por URL)
 window.addEventListener('resize', () => {
   const params = new URLSearchParams(window.location.search);
-  if (!params.has('res') && !params.has('projector') && localStorage.getItem('chancay_mode_1280x1024') === null) {
-    const isSXGA = (window.innerWidth <= 1300 && window.innerHeight >= 900) ||
-                   (Math.abs(window.innerWidth / window.innerHeight - 1.25) < 0.08);
-    if (isSXGA !== is1280Mode) {
-      setResolutionMode(isSXGA);
+  if (!params.has('res') && !params.has('projector') && localStorage.getItem('chancay_mode_1024x768') === null) {
+    const isXGA = (window.innerWidth <= 1080 && window.innerHeight <= 820) ||
+                  (window.innerWidth <= 1100 && Math.abs(window.innerWidth / window.innerHeight - 1.333) < 0.08);
+    if (isXGA !== is1280Mode) {
+      setResolutionMode(isXGA);
     }
   }
 });
@@ -1008,10 +1009,10 @@ function syncSlideWithMap(slideElement, slideIndex) {
 
     if (isMapSlide) {
       if (isNationalSlide) {
-        // Enfoque Macro Nacional: plano cenital ortogonal (90 grados, pitch: 0) centrado a la izquierda
+        // Enfoque Macro Nacional: en modo proyector 1024x768 alejamos la vista y desplazamos a la izquierda para mostrar todo el Perú y los 10 nodos
         map.flyTo({
-          center: rawCoords,
-          zoom: is1280Mode ? 4.80 : 4.85,
+          center: is1280Mode ? [-68.0, -9.6] : rawCoords,
+          zoom: is1280Mode ? 4.15 : 4.85,
           pitch: 0,
           bearing: 0,
           duration: duration,
@@ -1022,10 +1023,12 @@ function syncSlideWithMap(slideElement, slideIndex) {
           essential: true
         });
       } else {
-        const targetCenter = getSplitScreenCenter(rawCoords, zoomLevel, bearingLevel);
+        // En modo proyector 1024x768 (Slides 04–09), alejar al menos un 50% la distancia (-0.85 en escala log2 = ~1.8x distancia)
+        const effectiveZoom = is1280Mode ? Math.max(10.5, zoomLevel - 0.85) : zoomLevel;
+        const targetCenter = getSplitScreenCenter(rawCoords, effectiveZoom, bearingLevel);
         map.flyTo({
           center: targetCenter,
-          zoom: zoomLevel,
+          zoom: effectiveZoom,
           pitch: pitchLevel,
           bearing: bearingLevel,
           duration: duration,
