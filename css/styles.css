@@ -3039,10 +3039,25 @@ body.mode-1024x768 .glass-evidence-img {
   margin: 6px 0 8px !important;
 }
 
+/* En modo 1024x768 (Slides 04–09), ocultar etiquetas flotantes y dejar solo un punto pequeño señalando el lugar */
+body.mode-1024x768 .custom-marker .marker-label,
 body.mode-1024x768 .custom-marker.active-anchor .marker-label {
-  font-size: 0.88rem !important;
-  padding: 7px 14px !important;
-  margin-top: 6px !important;
+  display: none !important;
+}
+
+body.mode-1024x768 .custom-marker:not(.active-anchor) .marker-core {
+  width: 9px !important;
+  height: 9px !important;
+  opacity: 0.78 !important;
+}
+
+body.mode-1024x768 .custom-marker:not(.active-anchor) .marker-pulse {
+  display: none !important;
+}
+
+body.mode-1024x768 .custom-marker.active-anchor .marker-core {
+  width: 14px !important;
+  height: 14px !important;
 }
 
 /* SLIDE 10: MATRIZ DE VETO PLAYERS */
