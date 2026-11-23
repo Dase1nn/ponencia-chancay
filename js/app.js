@@ -73,7 +73,7 @@ const ANCHOR_POINTS = [
     slideIndex: 7, // Slide 8
     fileName: 'slide8_muni.webm',
     title: '05 · Municipalidad Distrital de Chancay (MDCH)',
-    subtitle: 'Plaza de Armas · 21 plazas CAP · PIM S/ 40.9M (7.1% ejec. T1)',
+    subtitle: 'Plaza de Armas · CAP 2008: 55/283 ocup. · PIM S/ 40.9M (7.1% T1)',
     coords: [-77.2669, -11.5633],
     colorClass: 'marker-cyan',
     hexColor: '#0284c7'
